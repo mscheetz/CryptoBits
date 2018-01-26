@@ -34,7 +34,6 @@ export class BinanceApi {
     this.apiKey = apiKey;
     this.apiSecret = apiSecret;
     this.restApi = new RestApi();
-    this.options = new RequestOptions({headers: this.headers});
 
     console.log('Binance APIs');
   }
