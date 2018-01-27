@@ -92,6 +92,7 @@ export class BinanceApi {
 
   /**
    *  Get best price/qty on the order book for a symbol or symbols.
+   * 
    * @param symbol      Optional symbol
    */
   public async getTickers(symbol?: string): Promise<Ticker[]>{
@@ -113,6 +114,7 @@ export class BinanceApi {
 
   /**
    *  Get 24hr ticker price change statistics
+   * 
    * @param symbol      Optional symbol
    */
   public async getTickers24hr(symbol?: string): Promise<Ticker24hr[]>{
@@ -134,7 +136,8 @@ export class BinanceApi {
 
 
   /**
-   * Get a binance api request
+   * Request a binance api
+   * 
    * @param httpMethod      Http Method type
    * @param url             Url to access
    * @param secured         Is the request secured?
