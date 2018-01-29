@@ -63,7 +63,8 @@ export class CoinMarketCapApi {
     let results: any = await this.cmcRequest(
       'GET',
       url,
-      false
+      false,
+      ["limit", 0]
     );
 
     return results;
