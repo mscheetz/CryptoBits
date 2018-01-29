@@ -8,14 +8,16 @@ import { RestApi } from './restApi';
 import { HttpMethod } from "blocking-proxy/built/lib/webdriver_commands";
 import { isNullOrUndefined } from 'util';
 import { CryptoJS } from "crypto-js";
-import { BinanceOrder } from '../classes/binance/binanceOrder';
+import { OrderDetailData } from '../classes/kucoin/orderDetailData';
 import { AccountData } from '../classes/binance/accountData';
-import { Ticker } from '../classes/binance/ticker';
+import { Tick } from '../classes/kucoin/tick';
 import { Ticker24hr } from '../classes/binance/ticker24hr';
 import { Balance } from '../classes/kucoin/balance';
 import { CoinBalance } from '../classes/kucoin/coinBalance';
 import { DepositWithdraw } from '../classes/kucoin/depositWithdraw';
 import { DepositWithdrawType } from '../classes/kucoin/depositWithdrawType';
+import { OrderDetail } from '../classes/kucoin/orderDetail';
+import { TickData } from '../classes/kucoin/tickData';
 
 @Component({
   selector: 'app-root',
@@ -46,25 +48,26 @@ export class KucoinApi {
    * Get all account orders; active, canceled, or filled.
    */
   public async getOrders(
-    symbol?: string,
-    id?: number,
-    limit?: number): Promise<BinanceOrder[]> {
+    symbol: string,
+    page?: number,
+    limit?: number): Promise<OrderDetailData> {
     
-    let url = this.apiBase + "/api/v3/allOrders";
+    let url = this.apiBase + "/v1/deal-orders";
+    if(page === null)
+      page = 1;
+    if(limit === null)
+      limit = 100;
+
     let results: any = await this.kucoinRequest(
       'GET',
       url,
       true,
       ["symbol", symbol],
-      ["orderId", id],
+      ["page", page],
       ["limit", limit]
     )
 
-    let orders: BinanceOrder[] = [];
-    for(let result of results){
-      orders.push(new BinanceOrder(result));
-    }
-    return orders
+    return results.data;
   }
 
   /**
@@ -114,8 +117,8 @@ export class KucoinApi {
    * 
    * @param symbol      Optional symbol
    */
-  public async getTickers(symbol?: string): Promise<Ticker[]>{
-    let url = this.apiBase + "/api/v1/ticker/bookTicker";
+  public async getTickers(symbol?: string): Promise<Tick>{
+    let url = this.apiBase + "/v1/open/tick";
 
     let results: any = await this.kucoinRequest(
       'GET',
@@ -124,35 +127,8 @@ export class KucoinApi {
       ["symbol", symbol]
     );
 
-    let tickers: Ticker[] = [];
-    for(let result of results){
-      tickers.push(new Ticker(result));
-    }
-    return tickers;
+    return results;
   }
-
-  /**
-   *  Get 24hr ticker price change statistics
-   * 
-   * @param symbol      Optional symbol
-   */
-  public async getTickers24hr(symbol?: string): Promise<Ticker24hr[]>{
-    let url = this.apiBase + "/api/v1/ticker/24hr";
-
-    let results: any = await this.kucoinRequest(
-      'GET',
-      url,
-      false,
-      ["symbol", symbol]
-    );
-
-    let tickers: Ticker24hr[] = [];
-    for(let result of results){
-      tickers.push(new Ticker24hr(result));
-    }
-    return tickers;
-  }
-
 
   /**
    * Request a KuCoin api
