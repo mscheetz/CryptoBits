@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Wallet } from '../classes/coinbase/wallet';
+import { TransactionData } from '../classes/coinbase/transactionData';
 
 @Component({
     selector: 'app-root',
@@ -25,5 +26,45 @@ import { Wallet } from '../classes/coinbase/wallet';
             accounts.push(new Wallet(result));
         }
         return accounts
+    }
+
+    public async GetBuys(account: string): Promise<TransactionData[]>{
+        let response = this.client.getBuys(account);
+
+        let transactions: TransactionData[] = [];
+        for(let trx of response.data){
+            transactions.push(trx);
+        }
+        return transactions;
+    }
+
+    public async GetSells(account: string): Promise<TransactionData[]>{
+        let response = this.client.getSells(account);
+
+        let transactions: TransactionData[] = [];
+        for(let trx of response.data){
+            transactions.push(trx);
+        }
+        return transactions;
+    }
+
+    public async GetDeposits(account: string): Promise<TransactionData[]>{
+        let response = this.client.getDeposits(account);
+
+        let transactions: TransactionData[] = [];
+        for(let trx of response.data){
+            transactions.push(trx);
+        }
+        return transactions;
+    }
+
+    public async GetWithdraws(account: string): Promise<TransactionData[]>{
+        let response = this.client.getWithdraws(account);
+
+        let transactions: TransactionData[] = [];
+        for(let trx of response.data){
+            transactions.push(trx);
+        }
+        return transactions;
     }
 }
