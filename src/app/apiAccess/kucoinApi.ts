@@ -17,12 +17,6 @@ import { DepositWithdrawType } from '../classes/kucoin/depositWithdrawType';
 import { OrderDetail } from '../classes/kucoin/orderDetail';
 import { TickData } from '../classes/kucoin/tickData';
 
-@Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
-})
-
 export class KucoinApi {
   
   private apiKey: string;

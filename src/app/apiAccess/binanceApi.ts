@@ -13,12 +13,6 @@ import { AccountData } from '../classes/binance/accountData';
 import { Ticker } from '../classes/binance/ticker';
 import { Ticker24hr } from '../classes/binance/ticker24hr';
 
-@Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
-})
-
 export class BinanceApi {
   
   private apiKey: string;

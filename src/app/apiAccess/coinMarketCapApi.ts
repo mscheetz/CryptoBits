@@ -10,12 +10,6 @@ import { isNullOrUndefined } from 'util';
 import { CryptoJS } from "crypto-js";
 import { Ticker } from '../classes/coinMarketCap/ticker';
 
-@Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
-})
-
 export class CoinMarketCapApi {
   
   private apiKey: string;
