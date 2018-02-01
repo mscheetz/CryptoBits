@@ -1,7 +1,7 @@
 /**
- * Enum of exchanges
+ * Enum of locations
  */
-export enum Exchange {
+export enum Location {
     Altcoin,
     Binance,
     Bitfinex,
@@ -17,5 +17,6 @@ export enum Exchange {
     Kucoin,
     Poloniex,
     StocksExchange,
-    Upcoin
+    Upcoin,
+    Wallet
 }
