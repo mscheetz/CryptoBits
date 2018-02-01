@@ -12,6 +12,8 @@ import { BinanceOrder } from '../classes/binance/binanceOrder';
 import { AccountData } from '../classes/binance/accountData';
 import { Ticker } from '../classes/binance/ticker';
 import { Ticker24hr } from '../classes/binance/ticker24hr';
+import { Deposit } from '../classes/binance/deposit';
+import { Withdraw } from '../classes/binance/withdraw';
 
 export class BinanceApi {
   
@@ -128,6 +130,41 @@ export class BinanceApi {
     return tickers;
   }
 
+  /**
+   * Get deposits to binance account.
+   * 
+   * @param symbol      (optional) Symbol of coin
+   */
+  public async getDeposits(symbol?: string): Promise<Deposit[]> {
+    let url = this.apiBase + "/wapi/v3/depositHistory.html"
+
+    let results: any = await this.binanceRequest(
+      'GET',
+      url,
+      true,
+      ["symbol", symbol]
+    );
+
+    return results.depositList;
+  }
+
+  /**
+   * Get withdraws to binance account.
+   * 
+   * @param symbol      (optional) Symbol of coin
+   */
+  public async getWithdraws(symbol?: string): Promise<Withdraw[]> {
+    let url = this.apiBase + "/wapi/v3/withdrawHistory.html"
+
+    let results: any = await this.binanceRequest(
+      'GET',
+      url,
+      true,
+      ["symbol", symbol]
+    );
+
+    return results.withdrawList;
+  }
 
   /**
    * Request a binance api
