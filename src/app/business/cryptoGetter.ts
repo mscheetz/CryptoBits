@@ -6,6 +6,8 @@ import { BinanceApi } from "../apiAccess/binanceApi";
 import { errorHandler } from "@angular/platform-browser/src/browser";
 import { CoinInformation } from "../classes/cryptoBits/coinInfo";
 import { AccountData } from "../classes/binance/accountData";
+import { Location } from "../classes/cryptoBits/location";
+import { BinanceBuilder } from "./binanceBuilder";
 
 export class CryptoGetter {
 
@@ -20,12 +22,12 @@ export class CryptoGetter {
         let trx: Transaction[] = [];
         this._user.apiInfo.forEach((api) => {
             switch(api.source) {
-                case "binance":
+                case Location.Binance:
                     this.GatherBinanceInfo();
                     break;
-                case "coinbase":
+                case Location.Coinbase:
                     break;
-                case "kucoin":
+                case Location.Kucoin:
                     break;
             }
         })
@@ -34,63 +36,11 @@ export class CryptoGetter {
     /**
      * Gather binance information
      */
-    public async GatherBinanceInfo() {
-        let api = this._user.apiInfo.find(api => api.source === "binance");
-        if (api !== null) {
-            let binanceApi = new BinanceApi(api.apiKey, api.apiSecret);
-            let orders: BinanceOrder[] = await binanceApi.getOrders()
-                                                .then(result => result);
+    public GatherBinanceInfo(): CoinInformation[] {
+        let api = this._user.apiInfo.find(api => api.source === Location.Binance);
 
-            let trx: Transaction[] = this.BinanceTrxConvert(orders);
-            
-            let account: AccountData = await binanceApi.getAccountData()
-                                                .then(result => result);
-            
-            let coins: CoinInformation[];
-        }
+        let binanceBuilder = new BinanceBuilder(api.apiKey, api.apiSecret);
+
+        return binanceBuilder.GatherBinanceInfo();
     }
-
-    /**
-     * Converts binance Accountdata to Coin information
-     * 
-     * @param coins         Binance AccountData
-     */
-    public BinanceCoinConvert(coins: AccountData): CoinInformation[] {
-        let coinList: CoinInformation[] = [];
-
-        for(let balance of coins.balances) {
-            let coin: CoinInformation;
-            coin.symbol = balance.asset;
-            coin.location = "binance";
-            coin.quantity = balance.available + balance.locked;
-
-            coinList.push(coin);
-        }
-
-        return coinList;
-    }
-
-    /**
-     * Converts a binance order array to transaction array
-     * 
-     * @param orders        BinanceOrder array
-     */
-    public BinanceTrxConvert(orders: BinanceOrder[]): Transaction[] {
-        let trxList: Transaction[] = [];
-
-        for(let order of orders){
-            let trx: Transaction;
-            trx.symbol = order.symbol.substr(0, order.symbol.length - 3);
-            trx.pair = order.symbol.substr(-3);
-            trx.type = String(order.type);
-            trx.date = order.timestamp;
-            trx.quantity = order.executedQuantity;
-            trx.trx_id = String(order.id);
-            trx.trx_source = "binance";
-
-            trxList.push(trx);
-        }
-        return trxList;
-    }
-
 }

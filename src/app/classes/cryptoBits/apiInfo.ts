@@ -1,17 +1,19 @@
+import { Location } from "./location";
+
 /**
  * Represents exchange api information.
  */
 export class ApiInformation {
 
-    private _source: string;
+    private _source: Location;
     private _apiKey: string;
     private _apiSecret: string;
 
-    get source(): string {
+    get source(): Location {
         return this._source;
     }
     
-    set source( value: string ) {
+    set source( value: Location ) {
         this._source = value;
     }
     
