@@ -1,12 +1,12 @@
 import { BinanceOrder } from "../classes/binance/binanceOrder";
 import { Transaction } from "../classes/cryptoBits/transaction";
-import { CoinInformation } from "../classes/cryptoBits/coinInfo";
 import { AccountData } from "../classes/binance/accountData";
 import { BinanceApi } from "../apiAccess/binanceApi";
 import { Deposit } from "../classes/binance/deposit";
 import { Helper } from "./helper";
 import { Withdraw } from "../classes/binance/withdraw";
 import { Location } from "../classes/cryptoBits/location";
+import { ApiCoin } from "../classes/cryptoBits/apiCoin";
 
 /**
  * Build binance information to CryptoBits information
@@ -14,71 +14,80 @@ import { Location } from "../classes/cryptoBits/location";
 export class BinanceBuilder {
     private _api;
     private _helper;
+    private _coins: ApiCoin[];
+    private _transactions: Transaction[];
 
     constructor(apiKey: string, apiSecret: string) {
         this._api = new BinanceApi(apiKey, apiSecret);
         this._helper = new Helper();
+        this._coins = [];
+        this._transactions = [];
     }
 
     /**
      * Gather binance information
      */
-    public GatherBinanceInfo(): CoinInformation[] {
-        let coins: CoinInformation[] = [];
-        
-        coins = this.GetAccountData();
+    public GatherBinanceInfo() {
+        this.CombineTransactionData();
+        this.GetAccountData();
+        this.CreateCoinsFromTrx();
+    }
 
+    /**
+     * Get Coins from Binance Apis
+     */
+    public GetCoins(): ApiCoin[] {
+        return this._coins;
+    }
+
+    /**
+     * Get Transactions from Binance Apis
+     */
+    public GetTrx(): Transaction[] {
+        return this._transactions;
+    }
+
+    /**
+     * Combine all transaction data
+     */
+    public CombineTransactionData() {
         let trx: Transaction[] = this.GetOrders();
         let deposits: Transaction[] = this.GetDeposits();
         let withdraws: Transaction[] = this.GetWithdraws();
+        
+        this._transactions.concat(trx);
+        this._transactions.concat(deposits);
+        this._transactions.concat(withdraws);
+    }
 
-        for(let coin of coins) {
-            coin.transactions = trx.filter(t => t.symbol === coin.symbol);
-            coin.transactions.concat(deposits.filter(d => d.symbol === coin.symbol));
-            coin.transactions.concat(withdraws.filter(w => w.symbol === coin.symbol));
+    /**
+     * Create new CoinInformation objects from transactions
+     */
+    public CreateCoinsFromTrx() {
+        let newCoins = this._helper.Unique(this._transactions, "symbol");
 
-            trx = trx.filter(function(t){
-                return t.symbol !== coin.symbol;
-            })
-            deposits = deposits.filter(function(d){
-                return d.symbol !== coin.symbol;
-            })
-            withdraws = withdraws.filter(function(w){
-                return w.symbol !== coin.symbol;
-            })
-        }
-
-        if (trx.length > 0) {
-            let newCoins = trx.map(function(t) {
-                return t.symbol;
-            });
-
-            for(let newCoin of newCoins) {
-                let coin: CoinInformation;
-                coin.symbol = newCoin;
-                coin.location = String(Location.Binance);
-                coin.quantity = 0;
-                coin.transactions = trx.filter(t => t.symbol === newCoin);
-                coin.transactions.concat(deposits.filter(d => d.symbol === newCoin));
-                coin.transactions.concat(withdraws.filter(w => w.symbol === newCoin));
-                coins.push()
-            
-                trx = trx.filter(function(t){
-                    return t.symbol !== newCoin;
-                })
-                deposits = deposits.filter(function(d){
-                    return d.symbol !== newCoin;
-                })
-                withdraws = withdraws.filter(function(w){
-                    return w.symbol !== newCoin;
-                })
+        for(let coin of this._coins) {
+            let idx = newCoins.indexOf(coin.symbol);
+            if(idx >= 0) {
+                newCoins.splice(idx, 1);
             }
         }
 
-        return coins;
+        for(let coin of newCoins) {
+            let nCoin = new ApiCoin;
+            nCoin.symbol = coin;
+            nCoin.quantity = 0;
+            nCoin.frozen = 0;
+            nCoin.location = Location.Binance;
+
+            this._coins.push(nCoin);
+        }
     }
 
-    public GetAccountData(): CoinInformation[] {
+    /**
+     * Get Binance AccountData from api and return CoinInformation
+     */
+    public GetAccountData(): ApiCoin[] {
         let account: AccountData;
         
         this._api.getAccountData().then(result => account = result);
@@ -86,6 +95,9 @@ export class BinanceBuilder {
         return this.BinanceCoinConvert(account);
     }
 
+    /**
+     * Get BinanceOrders from api and return Tranactions
+     */
     public GetOrders(): Transaction[] {
         let orders: BinanceOrder[];
 
@@ -94,6 +106,9 @@ export class BinanceBuilder {
         return this.BinanceTrxConvert(orders);
     }
 
+    /**
+     * Get Binance Deposits from api and return Transactions
+     */
     public GetDeposits(): Transaction[] {
         let deposits: Deposit[];
 
@@ -102,6 +117,9 @@ export class BinanceBuilder {
         return this.BinanceDepositConvert(deposits);
     }
 
+    /**
+     * Get Binance Withdraws from api and return Transactions
+     */
     public GetWithdraws(): Transaction[] {
         let withdraws: Withdraw[];
 
@@ -111,18 +129,19 @@ export class BinanceBuilder {
     }
 
     /**
-     * Converts binance Accountdata to Coin information
+     * Converts binance Accountdata to ApiCoin
      * 
      * @param coins         Binance AccountData
      */
-    public BinanceCoinConvert(coins: AccountData): CoinInformation[] {
-        let coinList: CoinInformation[] = [];
+    public BinanceCoinConvert(coins: AccountData): ApiCoin[] {
+        let coinList: ApiCoin[] = [];
 
         for(let balance of coins.balances) {
-            let coin: CoinInformation;
+            let coin: ApiCoin;
             coin.symbol = balance.asset;
-            coin.location = String(Location.Binance);
-            coin.quantity = balance.available + balance.locked;
+            coin.location = Location.Binance;
+            coin.quantity = balance.available
+            coin.frozen = balance.locked;
 
             coinList.push(coin);
         }
