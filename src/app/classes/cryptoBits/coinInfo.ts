@@ -1,5 +1,6 @@
 import { Transaction } from "./transaction";
 import { CoinEvent } from "./coinEvent";
+import { CoinWallet } from "./coinWallet";
 
 /**
  * Represents coin information.
@@ -9,8 +10,7 @@ export class CoinInformation {
     private _symbol: string;
     private _name: string;
     private _image_url: string;
-    private _quantity: number;
-    private _location: string;
+    private _wallet: CoinWallet[];
     private _events: CoinEvent[];
 
     get symbol(): string {
@@ -37,20 +37,12 @@ export class CoinInformation {
         this._image_url = value;
     }
 
-    get quantity(): number {
-        return this._quantity;
+    get wallet(): CoinWallet[] {
+        return this._wallet;
     }
 
-    set quantity(value: number) {
-        this._quantity = value;
-    }
-
-    get location(): string {
-        return this._location;
-    }
-
-    set location(value: string) {
-        this._location = value;
+    set wallet(value: CoinWallet[]) {
+        this._wallet = value;
     }
 
     get events(): CoinEvent[] {
