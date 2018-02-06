@@ -2,6 +2,7 @@
  * Represents a single coin from 99CryptoCoins
  */
 export class Coin {
+    
     private _id: string;
     private _name: string;
     private _symbol: string;
