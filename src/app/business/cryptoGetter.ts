@@ -26,8 +26,15 @@ export class CryptoGetter {
         this._helper = new Helper;
     }
 
-    public GetExchangeInfo() {
-        this._user.apiInfo.forEach((api) => {
+    public GetExchangeInfo(getApi?: ApiInformation) {
+        let apis: ApiInformation[] = [];
+
+        if(getApi === null){
+            apis = this.user.apiInfo;
+        } else {
+            apis.push(getApi);
+        }
+        apis.forEach((api) => {
             switch(api.source) {
                 case Location.Binance:
                     this.GetBinanceInfo();
@@ -38,6 +45,8 @@ export class CryptoGetter {
                     break;
             }
         })
+
+        this.SetCoinInfo();
     }
 
     /**
@@ -52,6 +61,9 @@ export class CryptoGetter {
         this._trx.concat(binanceBuilder.GetTrx());
     }
 
+    /**
+     * Set User.CoinInfo to ApiCoins
+     */
     public SetCoinInfo() {
         this._user.coinInfo = this.ApiCoinToCoinInfo();
     }
@@ -77,7 +89,12 @@ export class CryptoGetter {
             } else {
                 let i = this._helper.GetIndex(this._coinInfo, "symbol", coin.symbol);
 
-                this._coinInfo[i].wallet.push(wallet);
+                for(let coinWallet of this._coinInfo[i].wallet) {
+                    if(coinWallet.location === wallet.location) {
+                        coinWallet.frozen = wallet.frozen;
+                        coinWallet.quantity = wallet.quantity;
+                    }
+                }
             }
         }
         return coinInfo;
