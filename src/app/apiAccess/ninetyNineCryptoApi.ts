@@ -8,6 +8,7 @@ import { RestApi } from './restApi';
 import { HttpMethod } from "blocking-proxy/built/lib/webdriver_commands";
 import { isNullOrUndefined } from 'util';
 import { CryptoJS } from "crypto-js";
+import { Coin } from "../classes/99Crypto/coin";
 
 export class NinetyNineCryptoApi {
   
