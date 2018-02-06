@@ -11,7 +11,9 @@ import { BinanceBuilder } from "./binanceBuilder";
 import { ApiInformation } from "../classes/cryptoBits/apiInfo";
 import { ApiCoin } from "../classes/cryptoBits/apiCoin";
 import { CoinWallet } from "../classes/cryptoBits/coinWallet";
+import { Coin } from "../classes/99Crypto/coin";
 import { Helper } from "./helper";
+import { NinetyNineCryptoApi } from "../apiAccess/ninetyNineCryptoApi";
 
 export class CryptoGetter {
 
@@ -20,17 +22,30 @@ export class CryptoGetter {
     private _apiCoins: ApiCoin[] = [];
     private _coinInfo: CoinInformation[] = [];
     private _helper: Helper;
+    private _allCoins: Coin[];
 
     constructor(user: User) {
         this._user = user;
         this._helper = new Helper;
     }
 
+    /**
+     * Returns an updated user.
+     */
+    public GetUser(): User {
+        return this._user;
+    }
+
+    /**
+     * Get Exchange info
+     * 
+     * @param getApi        (optional) Exchange to get info from
+     */
     public GetExchangeInfo(getApi?: ApiInformation) {
         let apis: ApiInformation[] = [];
 
         if(getApi === null){
-            apis = this.user.apiInfo;
+            apis = this._user.apiInfo;
         } else {
             apis.push(getApi);
         }
@@ -47,6 +62,7 @@ export class CryptoGetter {
         })
 
         this.SetCoinInfo();
+        this.UpdateCoinInfo();
     }
 
     /**
@@ -66,6 +82,22 @@ export class CryptoGetter {
      */
     public SetCoinInfo() {
         this._user.coinInfo = this.ApiCoinToCoinInfo();
+    }
+
+    /**
+     * Update coin names images, etc
+     */
+    public UpdateCoinInfo() {
+        this.GetAllCoins();
+    }
+
+    /**
+     * Get all coin names/symbols
+     */
+    public GetAllCoins() {
+        let nintyNineBuilder = new NinetyNineCryptoApi();
+
+        nintyNineBuilder.getCoins().then(result => this._allCoins = result);
     }
 
     /**
