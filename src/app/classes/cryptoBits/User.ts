@@ -14,6 +14,7 @@ export class User {
     private _apiInfo: ApiInformation[];
     private _coinInfo: CoinInformation[];
     private _transactions: Transaction[];
+    private _watchList: CoinInformation[];
 
     get id(): string {
         return this._id;
@@ -69,6 +70,14 @@ export class User {
 
     set transaction(value: Transaction[]) {
         this._transactions = value;
+    }
+
+    get watchList(): CoinInformation[] {
+        return this._watchList;
+    }
+
+    set watchList(value: CoinInformation[]) {
+        this._watchList = value;
     }
     
 }
