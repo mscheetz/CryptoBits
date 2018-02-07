@@ -1,6 +1,7 @@
 import { Transaction } from "./transaction";
 import { CoinEvent } from "./coinEvent";
 import { CoinWallet } from "./coinWallet";
+import { CoinTicker } from "./coinTicker";
 
 /**
  * Represents coin information.
@@ -9,9 +10,9 @@ export class CoinInformation {
 
     private _symbol: string;
     private _name: string;
-    private _image_url: string;
     private _wallet: CoinWallet[];
     private _events: CoinEvent[];
+    private _ticker: CoinTicker;
 
     get symbol(): string {
         return this._symbol;
@@ -29,14 +30,6 @@ export class CoinInformation {
         this._name = value;
     }
 
-    get image_url(): string {
-        return this._image_url;
-    }
-
-    set image_url(value: string) {
-        this._image_url = value;
-    }
-
     get wallet(): CoinWallet[] {
         return this._wallet;
     }
@@ -51,5 +44,13 @@ export class CoinInformation {
 
     set events(value: CoinEvent[]) {
         this._events = value;
+    }
+
+    get ticker(): CoinTicker {
+        return this._ticker;
+    }
+
+    set ticker(value: CoinTicker) {
+        this._ticker = value;
     }
 }
