@@ -18,5 +18,6 @@ export enum Location {
     Poloniex,
     StocksExchange,
     Upcoin,
-    Wallet
+    Wallet,
+    ICO
 }
