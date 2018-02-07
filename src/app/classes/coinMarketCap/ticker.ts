@@ -13,6 +13,7 @@ export class Ticker {
     private _market_cap_usd: string;
     private _available_supply: string;
     private _total_supply: string;
+    private _max_supply: string;
     private _percent_change_1h: string;
     private _percent_change_24h: string;
     private _percent_change_7d: string;
@@ -30,6 +31,7 @@ export class Ticker {
         this._market_cap_usd = json.market_cap_usd;
         this._available_supply = json.available_supply;
         this._total_supply = json.total_supply;
+        this._max_supply = json.max_supply;
         this._percent_change_1h = json.percent_change_1h;
         this._percent_change_24h = json.percent_change_24h;
         this._percent_change_7d = json.percent_change_7d;
@@ -115,6 +117,22 @@ export class Ticker {
 
     set total_supply( value: string ) {
         this._total_supply = value;
+    }
+
+    get max_supply(): string {
+        return this._max_supply;
+    }
+
+    set max_supply( value: string ) {
+        this._max_supply = value;
+    }
+
+    get percent_change_1h(): string {
+        return this._percent_change_1h;
+    }
+
+    set percent_change_1h( value: string ) {
+        this._percent_change_1h = value;
     }
 
     get percent_change_24h(): string {
