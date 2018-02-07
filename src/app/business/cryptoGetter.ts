@@ -14,6 +14,11 @@ import { CoinWallet } from "../classes/cryptoBits/coinWallet";
 import { Coin } from "../classes/99Crypto/coin";
 import { Helper } from "./helper";
 import { NinetyNineCryptoApi } from "../apiAccess/ninetyNineCryptoApi";
+import { CoindarApi } from "../apiAccess/coindarApi";
+import { CoinMarketCapApi } from "../apiAccess/coinMarketCapApi";
+import { Ticker } from "../classes/coinMarketCap/ticker";
+import { CoinTicker } from "../classes/cryptoBits/coinTicker";
+import { CoindarBuilder } from "./coindarBuilder";
 
 export class CryptoGetter {
 
@@ -21,8 +26,9 @@ export class CryptoGetter {
     private _trx: Transaction[] = [];
     private _apiCoins: ApiCoin[] = [];
     private _coinInfo: CoinInformation[] = [];
-    private _helper: Helper;
+    private _ticker: Ticker[];
     private _allCoins: Coin[];
+    private _helper: Helper;
 
     constructor(user: User) {
         this._user = user;
@@ -89,6 +95,9 @@ export class CryptoGetter {
      */
     public UpdateCoinInfo() {
         this.GetAllCoins();
+        this.GetTickers();
+        this.SetCoinProperties();
+        this.GetCoinCalendars();
     }
 
     /**
@@ -98,6 +107,54 @@ export class CryptoGetter {
         let nintyNineBuilder = new NinetyNineCryptoApi();
 
         nintyNineBuilder.getCoins().then(result => this._allCoins = result);
+    }
+
+    /**
+     * Get coin ticker information.
+     */
+    public GetTickers() {
+        let coinMarketCap = new CoinMarketCapApi();
+        
+        coinMarketCap.getTickers().then(result => this._ticker = result);
+    }
+
+    /**
+     * Set coin name if null
+     */
+    public SetCoinProperties() {
+        for(let coin of this._coinInfo) {
+            if(coin.name === null) {
+                coin.name = this._allCoins.find(a => a.symbol === coin.symbol).name;
+            }
+            let coinTicker: CoinTicker;
+            let ticker: Ticker = this._ticker.find(t => t.symbol === coin.symbol);
+            if(ticker !== null) {
+                coinTicker.available_supply = +ticker.available_supply;
+                coinTicker.coin_24h_volume_usd = +ticker.c24h_volume_usd;
+                coinTicker.last_updated = +ticker.last_update;
+                coinTicker.market_cap_usd = +ticker.market_cap_usd;
+                coinTicker.max_supply = +ticker.max_supply;
+                coinTicker.percent_change_1h = +ticker.percent_change_1h;
+                coinTicker.percent_change_24h = +ticker.percent_change_24h;
+                coinTicker.percent_change_7d = +ticker.percent_change_7d;
+                coinTicker.price_btc = +ticker.price_btc;
+                coinTicker.price_usd = +ticker.price_usd;
+                coinTicker.rank = +ticker.rank;
+                coinTicker.total_supply = +ticker.total_supply;
+                coin.ticker = coinTicker;
+            }
+        }
+    }
+
+    /**
+     * Get coinEvents for each coin
+     */
+    public GetCoinCalendars() {
+        let coindar = new CoindarBuilder();
+        
+        this._coinInfo.forEach(coin => {
+            coin.events = coindar.GetCoindarInfo(coin.symbol);
+        });
     }
 
     /**
