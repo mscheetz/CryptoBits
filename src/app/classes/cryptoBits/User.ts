@@ -1,6 +1,7 @@
 import { ApiInformation } from "./apiInfo";
 import { CoinInformation } from "./coinInfo";
 import { Transaction } from "./transaction";
+import { watch } from "fs";
 
 /**
  * Represents a CryptoBits user.
@@ -15,6 +16,18 @@ export class User {
     private _coinInfo: CoinInformation[];
     private _transactions: Transaction[];
     private _watchList: CoinInformation[];
+
+    constructor (id: string, email: string, first: string, last: string, apiInfo: ApiInformation[], 
+    coinInfo: CoinInformation[], transactions: Transaction[], watchList: CoinInformation[]) {
+        this._id = id;
+        this._email = email;
+        this._first = first;
+        this._last = last;
+        this._apiInfo = apiInfo;
+        this._coinInfo = coinInfo;
+        this._transactions = transactions;
+        this._watchList = watchList;
+    }
 
     get id(): string {
         return this._id;
