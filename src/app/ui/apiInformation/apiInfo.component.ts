@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { ApiInformation } from '../../classes/cryptoBits/apiInfo';
 import { Location } from '../../classes/cryptoBits/location';
@@ -8,24 +8,36 @@ import { Location } from '../../classes/cryptoBits/location';
   templateUrl: './apiInfo.component.html',
   styleUrls: ['./apiInfo.component.css']
 })
-export class ApiInfoComponent implements OnInit {
-  apiInfo: ApiInformation;
-  location: Location;
-    locs: string[];
+
+export class ApiInfoComponent {
+  private apiInfo: ApiInformation;
+  private location: Location;
+  private locs;
+  private addApi: boolean = false;
+  @Output() AddedApi = new EventEmitter<ApiInformation>();
 
   constructor() { 
-      this.apiInfo = new ApiInformation();
+    this.apiInfo = new ApiInformation();
+    this.EnumToArray();
   }
   
   public EnumToArray() {
-      this.locs = [];
-      for(var item in Location) {
-          if(Location.hasOwnProperty(item)) {
-              this.locs.push(item);
-          }
-      }
+      this.locs = Object.keys(Location)
+                        .filter(key => !isNaN(Number(Location[key])));
   }
 
-  ngOnInit() {
+  public AddNewApi(){
+      this.AddedApi.emit(this.apiInfo);
+      console.log(this.apiInfo);
+      this.HideApiAdder();
+  }
+
+  public ShowApiAdder(){
+    this.apiInfo = new ApiInformation();
+    this.addApi = true;
+  }
+
+  public HideApiAdder() {
+      this.addApi = false;
   }
 }

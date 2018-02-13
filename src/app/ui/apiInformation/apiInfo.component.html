@@ -1,12 +1,21 @@
-<p>Add Api Information:
-<input [(ngModel)]="apiInfo.apiKey" placeholder="key" />
-<input [(ngModel)]="apiInfo.apiSecret" placeholder="secret" />
+<p>
+    <input type="button" [hidden]="addApi" value="Add Api Keys" (click)="ShowApiAdder()"/>
+</p>
+<div [hidden]="!addApi">
+    <h3>Add Exchange Api Information:</h3>
+    <p>
+Exchange:
 <select [(ngModel)]="apiInfo.source">
-    <option>Select Api Source</option>
-    <option>Binance</option>
+    <option *ngFor="let loc of locs" [ngValue]="loc">{{ loc }}</option>
 </select>
-<input type="button" value="Add new API Key">
+</p>
+<p>
+<input [(ngModel)]="apiInfo.apiKey" placeholder="api key" />
+<input [(ngModel)]="apiInfo.apiSecret" placeholder="api secret" />
+</p>
+<input type="button" value="Add Key" (click)="AddNewApi()" />
+<input type="button" value="Cancel" (click)="HideApiAdder()" />
 <!-- <select>
     <option ng-repeat="option in vm.locs" [value]="{{option}}">{{option}}</option>
 </select> -->
-</p>
+</div>

@@ -8,6 +8,7 @@ export class Transaction {
     private _type: string;
     private _date: Date;
     private _quantity: number;
+    private _price: number;
     private _source: string;
     private _destination: string;
     private _trx_id: string;
@@ -51,6 +52,14 @@ export class Transaction {
 
     set quantity(value: number) {
         this._quantity = value;
+    }
+
+    get price(): number {
+        return this._price;
+    }
+
+    set price(value: number) {
+        this._price = value;
     }
 
     get source(): string {
