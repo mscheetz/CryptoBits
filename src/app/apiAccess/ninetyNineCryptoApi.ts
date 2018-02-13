@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Http, Headers, Response } from '@angular/http';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
-import 'application/x-www-form-urlencoded';
+//import 'application/x-www-form-urlencoded';
 import { RequestOptions } from '@angular/http/src/base_request_options';
 import { RestApi } from './restApi';
 import { HttpMethod } from "blocking-proxy/built/lib/webdriver_commands";
@@ -66,10 +66,25 @@ export class NinetyNineCryptoApi {
         uri.searchParams.append(parameter[0], parameter[1].toString());
       }
 
+      let headers: any = this.GetHeaders(url);
+
       return await this.restApi.apiRequest(
         httpMethod,
-        uri.href
+        uri.href,
+        headers
       );
+
+  }
+
+  private GetHeaders(url: string):any {    
+    let headers: any = {};
+
+    headers["Access-Control-Allow-Origin"] = url;
+    headers["Access-Control-Allow-Methods"] = 'GET';
+    headers["Access-Control-Allow-Headers"] = 'X-Requested-With,content-type';
+    headers["Access-Control-Allow-Credentials"] = true;
+
+    return headers;
 
   }
 }
