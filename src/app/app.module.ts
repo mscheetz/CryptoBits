@@ -6,13 +6,15 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { PortfolioComponent } from './ui/portfolio/portfolio.component';
 import { ApiInfoComponent } from './ui/apiInformation/apiInfo.component';
+import { NewTransactionComponent } from './ui/newTransaction/newTransaction.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     PortfolioComponent,
-    ApiInfoComponent
+    ApiInfoComponent,
+    NewTransactionComponent
   ],
   imports: [
     BrowserModule,

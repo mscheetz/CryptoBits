@@ -1,0 +1,16 @@
+<div><button (click)="ToggleNewTrx(true)">+ Transaction</button></div>
+<div [hidden]="!newTransaction">
+    <h3>Add Exchange Api Information:</h3>
+    <div>
+        <div>Coin/Token:</div><div><input [(ngModel)]="transaction.symbol" placeholder="coin/token" /></div>
+        <div>Date: </div><div><input [(ngModel)]="transaction.date" placeholder="trx date" /></div>
+        <div>Qty: </div><div><input [(ngModel)]="transaction.quantity" placeholder="quantity" /></div>
+    </div>
+    <button (click)="SetTrxType(2)">ICO</button> | <button (click)="SetTrxType(1)">Airdrop</button>
+    <div [hidden]="!ico">
+        <div>Purchased With: </div><div><input [(ngModel)]="transaction.pair" placeholder="pair" /></div>
+        <div>Price: </div><div><input [(ngModel)]="transaction.price" placeholder="pair" /></div>
+    </div>
+    <input type="button" value="Add" (click)="AddTransaction()" />
+    <input type="button" value="Cancel" (click)="ToggleNewTrx(false)" />
+</div>
