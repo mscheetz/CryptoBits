@@ -21,7 +21,7 @@ export class NewTransactionComponent {
   private newTransaction: boolean = false;
   private trxType: TrxType;
   private ico: boolean = false;
-  @Output() AddedApi = new EventEmitter<ApiInformation>();
+  @Output() NewTrx = new EventEmitter<Transaction>();
   @Input() private allCoins: Coin[];
 
   constructor() { 
@@ -37,6 +37,7 @@ export class NewTransactionComponent {
   public AddTransaction(){
       //this.AddedApi.emit(this.apiInfo);
       //console.log(this.apiInfo);
+      this.NewTrx.emit(this.transaction);
       this.ToggleNewTrx(false);
   }
 

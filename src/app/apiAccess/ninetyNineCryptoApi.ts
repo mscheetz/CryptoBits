@@ -79,7 +79,7 @@ export class NinetyNineCryptoApi {
   private GetHeaders(url: string):any {    
     let headers: any = {};
 
-    headers["Access-Control-Allow-Origin"] = url;
+    headers["Access-Control-Allow-Origin"] = '*';
     headers["Access-Control-Allow-Methods"] = 'GET';
     headers["Access-Control-Allow-Headers"] = 'X-Requested-With,content-type';
     headers["Access-Control-Allow-Credentials"] = true;

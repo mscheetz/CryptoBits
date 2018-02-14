@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { PortfolioComponent } from './ui/portfolio/portfolio.component';
 import { ApiInfoComponent } from './ui/apiInformation/apiInfo.component';
 import { NewTransactionComponent } from './ui/newTransaction/newTransaction.component';
+import { CryptoComponent } from './ui/crypto/crypto.component';
 
 
 @NgModule({
@@ -14,7 +15,8 @@ import { NewTransactionComponent } from './ui/newTransaction/newTransaction.comp
     AppComponent,
     PortfolioComponent,
     ApiInfoComponent,
-    NewTransactionComponent
+    NewTransactionComponent,
+    CryptoComponent
   ],
   imports: [
     BrowserModule,
