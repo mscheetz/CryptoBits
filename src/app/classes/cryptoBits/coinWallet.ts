@@ -8,6 +8,12 @@ export class CoinWallet {
     private _frozen: number;
     private _location: Location;
 
+    constructor () {
+        this._quantity = 0;
+        this._frozen = 0;
+        this._location = Location.Wallet;
+    }
+
     get quantity(): number {
         return this._quantity;
     }
