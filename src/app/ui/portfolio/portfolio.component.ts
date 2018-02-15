@@ -9,6 +9,7 @@ import { CoinInformation } from '../../classes/cryptoBits/coinInfo';
 import { Transaction } from '../../classes/cryptoBits/transaction';
 import { CoinWallet } from '../../classes/cryptoBits/coinWallet';
 import { Location } from '../../classes/cryptoBits/location';
+import { DisplayCoin } from '../../classes/cryptoBits/displayCoin';
 
 @Component({
   selector: 'app-portfolio',
@@ -21,9 +22,10 @@ export class PortfolioComponent implements OnInit {
   private allCoins: Coin[];
   private user: User;
   private myCoins: CoinInformation[];
+  private coins: DisplayCoin[] = [];
 
   constructor() {
-    this.GetAllCoins();
+    //this.GetAllCoins();
     this.SetDefaultUser();
     this.portfolioTitle = 'Hello, ' + this.user.first + ' ' + this.user.last;
     this.myCoins = this.user.coinInfo;
@@ -90,6 +92,32 @@ export class PortfolioComponent implements OnInit {
         }
       });
     }
+    this.BuildDisplayCoins();
+  }
+  
+  public BuildDisplayCoins() {
+    if(this.user.coinInfo.length === 0)
+      return;
+
+
+    this.user.coinInfo.forEach(function(myCoin) {
+      let coin = new DisplayCoin();
+      coin.symbol = myCoin.symbol;
+      coin.name = myCoin.name;
+      coin.ticker = myCoin.ticker;
+      coin.locations = myCoin.wallet.length;
+      let quantity:number = 0;
+      for(var i = 0; i < myCoin.wallet.length; i ++) {
+        let wallet = {
+          frzn: Number(myCoin.wallet[i].frozen),
+          qty: Number(myCoin.wallet[i].quantity)
+        }
+        quantity += wallet.frzn + wallet.qty;
+      }
+      coin.quantity = quantity;
+
+      this.coins.push(coin);
+    });
   }
 
   public NewTransaction(){

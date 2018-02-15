@@ -12,7 +12,7 @@
     <h3>My Portfolio</h3>
     <app-newTransaction [allCoins]="allCoins" (NewTrx)="NewTrx($event)"></app-newTransaction>
     <div [hidden]="user.coinInfo.length === 0">
-        <app-crypto></app-crypto>
+        <app-crypto [coins]="coins"></app-crypto>
     </div>
     <div [hidden]="user.coinInfo.length > 0">
         Your portfolio is empty.

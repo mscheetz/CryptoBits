@@ -3,6 +3,7 @@ import { Http, Response } from '@angular/http';
 import { ApiInformation } from '../../classes/cryptoBits/apiInfo';
 import { Location } from '../../classes/cryptoBits/location';
 import { CoinInformation } from '../../classes/cryptoBits/coinInfo';
+import { DisplayCoin } from '../../classes/cryptoBits/displayCoin';
 
 @Component({
   selector: 'app-crypto',
@@ -11,7 +12,7 @@ import { CoinInformation } from '../../classes/cryptoBits/coinInfo';
 })
 
 export class CryptoComponent {
-  //@Input() private myCoins: CoinInformation[];
+  @Input() private coins: DisplayCoin[];
 
   constructor() { 
   }
