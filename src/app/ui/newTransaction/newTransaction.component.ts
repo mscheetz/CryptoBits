@@ -6,6 +6,7 @@ import { CoinInformation } from '../../classes/cryptoBits/coinInfo';
 import { Transaction } from '../../classes/cryptoBits/transaction';
 import { TrxType } from '../../classes/cryptoBits/trxType';
 import { Coin } from '../../classes/99Crypto/coin';
+import { UserService } from '../../services/userService';
 
 @Component({
   selector: 'app-newTransaction',
@@ -21,12 +22,14 @@ export class NewTransactionComponent {
   private newTransaction: boolean = false;
   private trxType: TrxType;
   private ico: boolean = false;
-  @Output() NewTrx = new EventEmitter<Transaction>();
+  private userService: UserService;
+  //@Output() NewTrx = new EventEmitter<Transaction>();
   @Input() private allCoins: Coin[];
 
   constructor() { 
     this.ToggleNewTrx(false);
     this.EnumToArray();
+    this.userService = new UserService();
   }
   
   public EnumToArray() {
@@ -37,7 +40,7 @@ export class NewTransactionComponent {
   public AddTransaction(){
       //this.AddedApi.emit(this.apiInfo);
       //console.log(this.apiInfo);
-      this.NewTrx.emit(this.transaction);
+      this.userService.NewTransaction(this.transaction);
       this.ToggleNewTrx(false);
   }
 

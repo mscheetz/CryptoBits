@@ -10,6 +10,7 @@ import { Transaction } from '../../classes/cryptoBits/transaction';
 import { CoinWallet } from '../../classes/cryptoBits/coinWallet';
 import { Location } from '../../classes/cryptoBits/location';
 import { DisplayCoin } from '../../classes/cryptoBits/displayCoin';
+import { UserService } from '../../services/userService';
 
 @Component({
   selector: 'app-portfolio',
@@ -22,27 +23,29 @@ export class PortfolioComponent implements OnInit {
   private allCoins: Coin[];
   private user: User;
   private myCoins: CoinInformation[];
-  private coins: DisplayCoin[] = [];
+  private userService: UserService;
 
   constructor() {
+    this.userService = new UserService();
     //this.GetAllCoins();
-    this.SetDefaultUser();
+    //this.SetDefaultUser();
+    this.user = this.userService.GetUser();
     this.portfolioTitle = 'Hello, ' + this.user.first + ' ' + this.user.last;
     this.myCoins = this.user.coinInfo;
   }
 
-  public SetDefaultUser(){
-    this.user = new User(
-      '1',                    // id
-      'mfscheetz@gmail.com',  // email
-      'Matt',                 // first
-      'Scheetz',              // last
-      [],                   // api info
-      [],                   // coin info
-      [],                   // transactions
-      []                    // watchlist
-    );
-  }
+  // public SetDefaultUser(){
+  //   this.user = new User(
+  //     '1',                    // id
+  //     'mfscheetz@gmail.com',  // email
+  //     'Matt',                 // first
+  //     'Scheetz',              // last
+  //     [],                   // api info
+  //     [],                   // coin info
+  //     [],                   // transactions
+  //     []                    // watchlist
+  //   );
+  // }
   
   /**
    * name
@@ -57,72 +60,7 @@ export class PortfolioComponent implements OnInit {
     this.user.apiInfo.push(newApi);
     console.log(this.user.apiInfo);
   }
-
-  public NewTrx(newTrx: Transaction){
-    this.user.transaction.push(newTrx);
-
-    let wallet: CoinWallet = new CoinWallet();
-    wallet.quantity = newTrx.quantity;
-    wallet.location = Location.Wallet;
-
-    let newCoin: CoinInformation = new CoinInformation();
-    newCoin.name = newTrx.symbol;
-    newCoin.symbol = newTrx.symbol;
-    newCoin.wallet = [];
-    newCoin.wallet.push(wallet);
-
-    let myCoin: CoinInformation = this.user.coinInfo.find(c => c.symbol === newCoin.symbol);
-
-    if(myCoin == null){
-      this.user.coinInfo.push(newCoin);
-    } else {
-      this.user.coinInfo.forEach(function(coin){
-        if(coin.symbol === newCoin.symbol) {
-          for(var i = 0; i< coin.wallet.length; i++){
-            let coinFound: boolean = false;
-            if(coin.wallet[i].location === wallet.location){
-              let newQty = coin.wallet[i].quantity + wallet.quantity;
-              coin.wallet[i].location = newQty;
-              coinFound = true;
-            }
-            if(!coinFound) {
-              coin.wallet.push(wallet);
-            }
-          }
-        }
-      });
-    }
-    this.BuildDisplayCoins();
-  }
   
-  public BuildDisplayCoins() {
-    if(this.user.coinInfo.length === 0)
-      return;
-
-
-    this.user.coinInfo.forEach(function(myCoin) {
-      let coin = new DisplayCoin();
-      coin.symbol = myCoin.symbol;
-      coin.name = myCoin.name;
-      coin.ticker = myCoin.ticker;
-      coin.locations = myCoin.wallet.length;
-      let quantity:number = 0;
-      for(var i = 0; i < myCoin.wallet.length; i ++) {
-        let wallet = {
-          frzn: Number(myCoin.wallet[i].frozen),
-          qty: Number(myCoin.wallet[i].quantity)
-        }
-        quantity += wallet.frzn + wallet.qty;
-      }
-      coin.quantity = quantity;
-
-      this.coins.push(coin);
-    });
-  }
-
-  public NewTransaction(){
-
-  }
   ngOnInit() {
 
   }
