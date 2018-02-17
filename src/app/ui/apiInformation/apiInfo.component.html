@@ -1,7 +1,7 @@
 <p>
-    <input type="button" [hidden]="addApi" value="Add Api Keys" (click)="ShowApiAdder()"/>
+    <input type="button" *ngIf="!addApi" value="Add Api Keys" (click)="showApiAdder()"/>
 </p>
-<div [hidden]="!addApi">
+<div *ngIf="addApi">
     <h3>Add Exchange Api Information:</h3>
     <p>
 Exchange:
@@ -13,8 +13,8 @@ Exchange:
 <input [(ngModel)]="apiInfo.apiKey" placeholder="api key" />
 <input [(ngModel)]="apiInfo.apiSecret" placeholder="api secret" />
 </p>
-<input type="button" value="Add Key" (click)="AddNewApi()" />
-<input type="button" value="Cancel" (click)="HideApiAdder()" />
+<input type="button" value="Add Key" (click)="addNewApi()" />
+<input type="button" value="Cancel" (click)="hideApiAdder()" />
 <!-- <select>
     <option ng-repeat="option in vm.locs" [value]="{{option}}">{{option}}</option>
 </select> -->

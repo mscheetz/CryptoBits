@@ -18,22 +18,27 @@ import { UserService } from '../../services/userService';
   styleUrls: ['./portfolio.component.css']
 })
 export class PortfolioComponent implements OnInit {
-  private portfolioTitle = 'Portfolio';
-  private cryptoBits;
-  private allCoins: Coin[];
-  private user: User;
-  private myCoins: CoinInformation[];
-  private userService: UserService;
+  portfolioTitle = 'Portfolio';
+  cryptoBits;
+  allCoins: Coin[];
+  user: User;
+  myCoins: CoinInformation[];
+  //private userService: UserService;
 
-  constructor() {
-    this.userService = new UserService();
+  constructor(private userService: UserService) {
+    //this.userService = new UserService();
     //this.GetAllCoins();
     //this.SetDefaultUser();
-    this.user = this.userService.GetUser();
+    //this.user = this.userService.GetUser();
+    this.getUser();
     this.portfolioTitle = 'Hello, ' + this.user.first + ' ' + this.user.last;
     this.myCoins = this.user.coinInfo;
   }
 
+  getUser(): void {
+    this.userService.getUser()
+        .subscribe(user => this.user = user);
+  }
   // public SetDefaultUser(){
   //   this.user = new User(
   //     '1',                    // id
@@ -50,18 +55,18 @@ export class PortfolioComponent implements OnInit {
   /**
    * name
    */
-  public GetAllCoins() {
+  getAllCoins() {
     let c99Getter = new NinetyNineCryptoApi();
 
     c99Getter.getCoins().then(result => this.allCoins = result);
   }
 
-  public AddedApi(newApi: ApiInformation){
+  addedApi(newApi: ApiInformation){
     this.user.apiInfo.push(newApi);
     console.log(this.user.apiInfo);
   }
   
   ngOnInit() {
-
+    this.getUser();
   }
 }

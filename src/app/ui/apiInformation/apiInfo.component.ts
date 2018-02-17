@@ -14,30 +14,30 @@ export class ApiInfoComponent {
   private location: Location;
   private locs;
   private addApi: boolean = false;
-  @Output() AddedApi = new EventEmitter<ApiInformation>();
+  @Output() addedApi = new EventEmitter<ApiInformation>();
 
   constructor() { 
     this.apiInfo = new ApiInformation();
-    this.EnumToArray();
+    this.enumToArray();
   }
   
-  public EnumToArray() {
+  enumToArray() {
       this.locs = Object.keys(Location)
                         .filter(key => !isNaN(Number(Location[key])));
   }
 
-  public AddNewApi(){
-      this.AddedApi.emit(this.apiInfo);
+  addNewApi(){
+      this.addedApi.emit(this.apiInfo);
       console.log(this.apiInfo);
-      this.HideApiAdder();
+      this.hideApiAdder();
   }
 
-  public ShowApiAdder(){
+  showApiAdder(){
     this.apiInfo = new ApiInformation();
     this.addApi = true;
   }
 
-  public HideApiAdder() {
+  hideApiAdder() {
       this.addApi = false;
   }
 }

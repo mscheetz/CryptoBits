@@ -1,6 +1,6 @@
 <h3>{{portfolioTitle}}</h3>
 
-<app-apiInfo (AddedApi)="AddedApi($event)"></app-apiInfo>
+<app-apiInfo (addedApi)="addedApi($event)"></app-apiInfo>
 <div [hidden]="user.apiInfo.length === 0">
     <h3>My API Keys</h3>
     <div *ngFor="let api of user.apiInfo">
