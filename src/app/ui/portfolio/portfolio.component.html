@@ -1,7 +1,7 @@
 <h3>{{portfolioTitle}}</h3>
 
 <app-apiInfo (addedApi)="addedApi($event)"></app-apiInfo>
-<div [hidden]="user.apiInfo.length === 0">
+<div *ngIf="user.apiInfo.length > 0">
     <h3>My API Keys</h3>
     <div *ngFor="let api of user.apiInfo">
         <div>Exchange: {{api.source}}</div>
@@ -11,10 +11,10 @@
 <div>
     <h3>My Portfolio</h3>
     <app-newTransaction [allCoins]="allCoins"></app-newTransaction>
-    <div [hidden]="user.coinInfo.length === 0">
+    <div *ngIf="user.coinInfo.length > 0">
         <app-crypto></app-crypto>
     </div>
-    <div [hidden]="user.coinInfo.length > 0">
+    <div *ngIf="user.coinInfo.length === 0">
         Your portfolio is empty.
     </div>
 </div>

@@ -1,10 +1,12 @@
-<div *ngIf="coins.length === 0">
+<div *ngIf="coins.length > 0">
     <h3>My Coins</h3>
-    <div *ngFor="let coin of coins">
-        <div><div>{{ coin.symbol }}</div><div>{{ coin.name }}</div></div>
-        <div><div>{{ coin.quantity }}</div><div></div></div>
+    <div *ngFor="let coin of coins | async">
+        <div>{{ coin.symbol }}</div>
+        <div>{{ coin.quantity }}</div>
+        <!-- <div><div>{{ coin.symbol }}</div><div>{{ coin.name }}</div></div>
+        <div><div>{{ coin.quantity }}</div><div></div></div> -->
     </div>
 </div>
-<div *ngIf="coins.length > 0">
+<div *ngIf="coins.length === 0">
     <h3>Connect to an Exchange or add Transactions to view your coins</h3>
 </div>

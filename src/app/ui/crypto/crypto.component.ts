@@ -10,20 +10,23 @@ import { UserService } from '../../services/userService';
 @Component({
   selector: 'app-crypto',
   templateUrl: './crypto.component.html',
-  styleUrls: ['./crypto.component.css']
+  styleUrls: ['./crypto.component.css'],
+  //providers: [ UserService ]
 })
 
-export class CryptoComponent {
-  coins: DisplayCoin[];
+export class CryptoComponent {//implements OnInit {
+  coins: any;//Observable<DisplayCoin[]>;
 
-  constructor(private userService: UserService) { }
-
-  ngOnInit() {
-    this.getDisplayCoins();
+  constructor(private userService: UserService) { 
+    this.getCoins();
   }
+
+  // ngOnInit() {
+  //   //this.coins = this.userService.coins;
+  //   this.getCoins();
+  // }
   
-  getDisplayCoins(): void {
-    this.userService.getDisplayCoins()
-        .subscribe(coins => this.coins = coins);
+  getCoins() {
+    this.coins = this.userService.getDisplayCoins().subscribe(coins => { this.coins = coins; });
   }
 }

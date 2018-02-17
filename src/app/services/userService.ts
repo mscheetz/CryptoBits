@@ -5,18 +5,25 @@ import { Transaction } from "../classes/cryptoBits/transaction";
 import { CoinWallet } from "../classes/cryptoBits/coinWallet";
 import { CoinInformation } from "../classes/cryptoBits/coinInfo";
 import { Location } from "../classes/cryptoBits/location";
-import { Observable, Subject } from "rxjs";
+import { Observable, BehaviorSubject } from "rxjs";
+import { Subject } from "rxjs/Subject";
 import { Injectable } from "@angular/core";
 import { of } from "rxjs/observable/of";
 
 @Injectable()
 export class UserService {
-    user: User;
-    coins: DisplayCoin[];
-    coinsSubject: Subject<DisplayCoin[]> = new Subject();
+    user: User;    
+    coinList: Observable<DisplayCoin[]>;
+    // private _coins: BehaviorSubject<DisplayCoin[]>;
+    // private coinStore: {
+    //     coins: DisplayCoin[]
+    // };
+    private subject = new Subject<any>();
 
     constructor() {
-        this.coins = [];//this.coinsSubject.asObservable();
+        // this.coinStore = { coins: [] };
+        // this._coins = <BehaviorSubject<DisplayCoin[]>>new BehaviorSubject([]);
+        // this.coinList = this._coins.asObservable();
         this.setDefaultUser();
     }
 
@@ -41,8 +48,14 @@ export class UserService {
         return of(this.user);
     }
 
-    getDisplayCoins(): Observable<DisplayCoin[]> {
-        return of(this.coins);
+    getDisplayCoins(): Observable<any> {//: Observable<DisplayCoin[]> {
+        //return of(this.coins);
+        // return new Observable(observer => {
+        //     //this.coins;
+        //     observer.next(this.coins);            
+        //   });/
+        //return this._coins.next(Object.assign({}, this.coinStore).coins);
+        return this.subject.asObservable();
     }
 
     newTransaction(newTrx: Transaction){
@@ -83,29 +96,30 @@ export class UserService {
     }
 
     updateDisplayCoins() {
-        this.coins = [];
-        if(this.user.coinInfo.length === 0)
-            return;
-
+        let coins = [];
+        //this.coinStore = { coins: [] };
+        if(this.user.coinInfo.length > 0) {
         //this.user.coinInfo.forEach(function(myCoin) {
-        for(var i = 0; i< this.user.coinInfo.length; i ++) {
-            let myCoin = this.user.coinInfo[i];
-            let coin = new DisplayCoin();
-            coin.symbol = myCoin.symbol;
-            coin.name = myCoin.name;
-            coin.ticker = myCoin.ticker;
-            coin.locations = myCoin.wallet.length;
-            let quantity:number = 0;
-            for(var ii = 0; ii < myCoin.wallet.length; ii ++) {
-                let wallet = {
-                frzn: Number(myCoin.wallet[i].frozen),
-                qty: Number(myCoin.wallet[i].quantity)
+            for(var i = 0; i< this.user.coinInfo.length; i ++) {
+                let myCoin = this.user.coinInfo[i];
+                let coin = new DisplayCoin();
+                coin.symbol = myCoin.symbol;
+                coin.name = myCoin.name;
+                coin.ticker = myCoin.ticker;
+                coin.locations = myCoin.wallet.length;
+                let quantity:number = 0;
+                for(var ii = 0; ii < myCoin.wallet.length; ii ++) {
+                    let wallet = {
+                    frzn: Number(myCoin.wallet[i].frozen),
+                    qty: Number(myCoin.wallet[i].quantity)
+                    }
+                    quantity += wallet.frzn + wallet.qty;
                 }
-                quantity += wallet.frzn + wallet.qty;
-            }
-            coin.quantity = quantity;
+                coin.quantity = quantity;
 
-            this.coins.push(coin);
+                coins.push(coin);
+            }
         }
+        this.subject.next({ coins: coins });
     }
 }
