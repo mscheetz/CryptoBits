@@ -6,22 +6,25 @@ import { CoinWallet } from "../classes/cryptoBits/coinWallet";
 import { CoinInformation } from "../classes/cryptoBits/coinInfo";
 import { Location } from "../classes/cryptoBits/location";
 import { Observable, Subject } from "rxjs";
+import { Injectable } from "@angular/core";
+import { of } from "rxjs/observable/of";
 
+@Injectable()
 export class UserService {
-    private user: User;
-    private coins: DisplayCoin[];
-    private coinsSubject: Subject<DisplayCoin[]> = new Subject();
+    user: User;
+    coins: DisplayCoin[];
+    coinsSubject: Subject<DisplayCoin[]> = new Subject();
 
     constructor() {
         this.coins = [];//this.coinsSubject.asObservable();
-        this.SetDefaultUser();
+        this.setDefaultUser();
     }
 
-    public CreateUser(first: string, last: string, email: string,  ){
+    createUser(first: string, last: string, email: string,  ){
         this.user = new User(UUID.UUID(), email, first, last, [], [], [], []);        
     }
 
-    public SetDefaultUser(){
+    setDefaultUser(){
         this.user = new User(
           '1',                    // id
           'mfscheetz@gmail.com',  // email
@@ -34,11 +37,15 @@ export class UserService {
         );
     }
 
-    public GetUser(): User {
-        return this.user;
+    getUser(): Observable<User> {
+        return of(this.user);
     }
 
-    public NewTransaction(newTrx: Transaction){
+    getDisplayCoins(): Observable<DisplayCoin[]> {
+        return of(this.coins);
+    }
+
+    newTransaction(newTrx: Transaction){
         this.user.transaction.push(newTrx);
     
         let wallet: CoinWallet = new CoinWallet();
@@ -72,11 +79,11 @@ export class UserService {
             }
           });
         }
-        this.UpdateDisplayCoins();
+        this.updateDisplayCoins();
     }
 
-    public UpdateDisplayCoins(): DisplayCoin[] {
-        this.coins = []        
+    updateDisplayCoins() {
+        this.coins = [];
         if(this.user.coinInfo.length === 0)
             return;
 
@@ -99,11 +106,6 @@ export class UserService {
             coin.quantity = quantity;
 
             this.coins.push(coin);
-        }//);
-        this.coinsSubject.next(Object.assign({}, this.coins));
-    }
-
-    public GetDisplayCoins(): Observable<DisplayCoin[]> {
-        return this.coinsSubject.asObservable();
+        }
     }
 }

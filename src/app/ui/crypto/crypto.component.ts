@@ -14,17 +14,16 @@ import { UserService } from '../../services/userService';
 })
 
 export class CryptoComponent {
-  private userService: UserService;
-  //@Input() private coins: DisplayCoin[];
-  private coins: DisplayCoin[];
+  coins: DisplayCoin[];
 
-  constructor() { }
+  constructor(private userService: UserService) { }
 
   ngOnInit() {
-    this.userService = new UserService();
-    // this.userService.GetDisplayCoins.subscribe(data => {
-    //   this.coins = data
-    // });
+    this.getDisplayCoins();
   }
   
+  getDisplayCoins(): void {
+    this.userService.getDisplayCoins()
+        .subscribe(coins => this.coins = coins);
+  }
 }

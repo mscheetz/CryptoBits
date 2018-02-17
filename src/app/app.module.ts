@@ -8,6 +8,7 @@ import { PortfolioComponent } from './ui/portfolio/portfolio.component';
 import { ApiInfoComponent } from './ui/apiInformation/apiInfo.component';
 import { NewTransactionComponent } from './ui/newTransaction/newTransaction.component';
 import { CryptoComponent } from './ui/crypto/crypto.component';
+import { UserService } from './services/userService';
 
 
 @NgModule({
@@ -22,7 +23,9 @@ import { CryptoComponent } from './ui/crypto/crypto.component';
     BrowserModule,
     FormsModule
   ],
-  providers: [],
+  providers: [
+    UserService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

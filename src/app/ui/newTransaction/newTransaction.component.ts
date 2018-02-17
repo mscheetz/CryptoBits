@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { ApiInformation } from '../../classes/cryptoBits/apiInfo';
 import { Location } from '../../classes/cryptoBits/location';
@@ -14,7 +14,7 @@ import { UserService } from '../../services/userService';
   styleUrls: ['./newTransaction.component.css']
 })
 
-export class NewTransactionComponent {
+export class NewTransactionComponent implements OnInit {
   private coinInfo: CoinInformation;
   private transaction: Transaction;
   private location: Location;
@@ -22,14 +22,16 @@ export class NewTransactionComponent {
   private newTransaction: boolean = false;
   private trxType: TrxType;
   private ico: boolean = false;
-  private userService: UserService;
   //@Output() NewTrx = new EventEmitter<Transaction>();
   @Input() private allCoins: Coin[];
 
-  constructor() { 
+  constructor(private userService: UserService) { 
     this.ToggleNewTrx(false);
     this.EnumToArray();
-    this.userService = new UserService();
+  }
+
+  ngOnInit() {
+    
   }
   
   public EnumToArray() {
@@ -40,7 +42,7 @@ export class NewTransactionComponent {
   public AddTransaction(){
       //this.AddedApi.emit(this.apiInfo);
       //console.log(this.apiInfo);
-      this.userService.NewTransaction(this.transaction);
+      this.userService.newTransaction(this.transaction);
       this.ToggleNewTrx(false);
   }
 
