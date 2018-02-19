@@ -6,6 +6,7 @@ import { Location } from '../../classes/cryptoBits/location';
 import { CoinInformation } from '../../classes/cryptoBits/coinInfo';
 import { DisplayCoin } from '../../classes/cryptoBits/displayCoin';
 import { UserService } from '../../services/userService';
+import { Coin } from '../../classes/99Crypto/coin';
 
 @Component({
   selector: 'app-crypto',
@@ -15,10 +16,14 @@ import { UserService } from '../../services/userService';
 })
 
 export class CryptoComponent {//implements OnInit {
-  coins: any;//Observable<DisplayCoin[]>;
+  @Input() coin: CoinInformation;
+  coins: DisplayCoin[] = [];//Observable<DisplayCoin[]>;
 
   constructor(private userService: UserService) { 
-    this.getCoins();
+    userService.coinListAnnounced$.subscribe(
+      coins => {
+        this.coins = coins;
+      });
   }
 
   // ngOnInit() {
@@ -26,7 +31,7 @@ export class CryptoComponent {//implements OnInit {
   //   this.getCoins();
   // }
   
-  getCoins() {
-    this.coins = this.userService.getDisplayCoins().subscribe(coins => { this.coins = coins; });
-  }
+  // getCoins() {
+  //   this.coins = this.userService.getDisplayCoins().subscribe(coins => { this.coins = coins; });
+  // }
 }

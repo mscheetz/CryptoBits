@@ -19,6 +19,9 @@ export class UserService {
     //     coins: DisplayCoin[]
     // };
     private subject = new Subject<any>();
+    private coinListAnnouncedSource = new Subject<DisplayCoin[]>();
+    
+    coinListAnnounced$ = this.coinListAnnouncedSource.asObservable();
 
     constructor() {
         // this.coinStore = { coins: [] };
@@ -28,7 +31,7 @@ export class UserService {
     }
 
     createUser(first: string, last: string, email: string,  ){
-        this.user = new User(UUID.UUID(), email, first, last, [], [], [], []);        
+        this.user = new User(UUID.UUID(), email, first, last, [], [], [], [], []);        
     }
 
     setDefaultUser(){
@@ -40,12 +43,17 @@ export class UserService {
           [],                   // api info
           [],                   // coin info
           [],                   // transactions
-          []                    // watchlist
+          [],                    // watchlist
+          []                    // displayCoins
         );
     }
 
     getUser(): Observable<User> {
         return of(this.user);
+    }
+
+    announceDisplayCoins() {
+        this.coinListAnnouncedSource.next();
     }
 
     getDisplayCoins(): Observable<any> {//: Observable<DisplayCoin[]> {
@@ -81,8 +89,8 @@ export class UserService {
               for(var i = 0; i< coin.wallet.length; i++){
                 let coinFound: boolean = false;
                 if(coin.wallet[i].location === wallet.location){
-                  let newQty = coin.wallet[i].quantity + wallet.quantity;
-                  coin.wallet[i].location = newQty;
+                  let newQty = Number(coin.wallet[i].quantity) + Number(wallet.quantity);
+                  coin.wallet[i].quantity = newQty;
                   coinFound = true;
                 }
                 if(!coinFound) {
@@ -120,6 +128,7 @@ export class UserService {
                 coins.push(coin);
             }
         }
+        this.user.displayCoins = coins;
         this.subject.next({ coins: coins });
     }
 }

@@ -11,10 +11,10 @@
 <div>
     <h3>My Portfolio</h3>
     <app-newTransaction [allCoins]="allCoins"></app-newTransaction>
-    <div *ngIf="user.coinInfo.length > 0">
-        <app-crypto></app-crypto>
+    <div *ngIf="user.displayCoins.length > 0">
+        <app-crypto *ngFor="let coin of user.displayCoins" [coin]="coin"></app-crypto>
     </div>
-    <div *ngIf="user.coinInfo.length === 0">
+    <div *ngIf="user.displayCoins.length === 0">
         Your portfolio is empty.
     </div>
 </div>
