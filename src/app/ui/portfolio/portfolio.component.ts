@@ -27,7 +27,7 @@ export class PortfolioComponent implements OnInit {
 
   constructor(private userService: UserService) {
     //this.userService = new UserService();
-    //this.GetAllCoins();
+    //this.getAllCoins();
     //this.SetDefaultUser();
     //this.user = this.userService.GetUser();
     this.getUser();
@@ -58,7 +58,9 @@ export class PortfolioComponent implements OnInit {
   getAllCoins() {
     let c99Getter = new NinetyNineCryptoApi();
 
-    c99Getter.getCoins().then(result => this.allCoins = result);
+    c99Getter.getCoins().subscribe(data => {
+      this.allCoins = data
+    });
   }
 
   addedApi(newApi: ApiInformation){

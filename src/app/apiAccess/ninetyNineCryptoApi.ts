@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Http, Headers, Response } from '@angular/http';
+import { Component, Injectable } from '@angular/core';
+import { Headers, Response } from '@angular/http';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
 //import 'application/x-www-form-urlencoded';
@@ -10,13 +10,14 @@ import { isNullOrUndefined } from 'util';
 import { CryptoJS } from "crypto-js";
 import { Coin } from "../classes/99Crypto/coin";
 
+@Injectable()
 export class NinetyNineCryptoApi {
   
-  private apiBase = 'https://api.99cryptocoin.com';
-  private apiComplete = '';
-  private headers;
-  private options;
-  private restApi;
+  apiBase = 'https://api.99cryptocoin.com';
+  apiComplete = '';
+  headers;
+  options;
+  restApi;
   data: any = {};
 
   constructor() {
@@ -28,10 +29,10 @@ export class NinetyNineCryptoApi {
   /**
    *  Get coin name/symbol.
    */
-  public async getCoins(): Promise<Coin[]>{
+  getCoins(): Observable<Coin[]>{
     let url = this.apiBase + "/v1/coins";
 
-    let results: any = await this.nnccRequest(
+    let results: any = this.nnccRequest(
       'GET',
       url,
       false
@@ -48,11 +49,11 @@ export class NinetyNineCryptoApi {
    * @param secured         Is the request secured?
    * @param parameters      Optional query parameters
    */
-  private async nnccRequest(
+  nnccRequest(
     httpMethod: string,
     url: string,
     secured: boolean,
-    ...parameters: [ string, any ][]): Promise<any>{
+    ...parameters: [ string, any ][]): Observable<any>{
       
       let uri: URL = new URL(
         url,
@@ -68,7 +69,7 @@ export class NinetyNineCryptoApi {
 
       let headers: any = this.GetHeaders(url);
 
-      return await this.restApi.apiRequest(
+      return this.restApi.apiRequest(
         httpMethod,
         uri.href,
         headers
@@ -76,13 +77,15 @@ export class NinetyNineCryptoApi {
 
   }
 
-  private GetHeaders(url: string):any {    
+  GetHeaders(url: string):any {    
     let headers: any = {};
 
     headers["Access-Control-Allow-Origin"] = '*';
-    headers["Access-Control-Allow-Methods"] = 'GET';
-    headers["Access-Control-Allow-Headers"] = 'X-Requested-With,content-type';
-    headers["Access-Control-Allow-Credentials"] = true;
+    headers["Access-Control-Expose-Headers"] = 'Content-Length, Content-Encoding, Content-Type';
+    headers["Access-Control-Allow-Methods"] = 'GET, POST, PATCH, PUT, DELETE, OPTIONS';
+    headers["Access-Control-Allow-Headers"] = 'Content-Type, Accept, X-Requested-With, remember-me';
+    //headers["Access-Control-Allow-Credentials"] = true;
+    //headers["Content-Type"] = "text/html; charset=utf-8";
 
     return headers;
 
