@@ -118,8 +118,8 @@ export class UserService {
                 let quantity:number = 0;
                 for(var ii = 0; ii < myCoin.wallet.length; ii ++) {
                     let wallet = {
-                    frzn: Number(myCoin.wallet[i].frozen),
-                    qty: Number(myCoin.wallet[i].quantity)
+                    frzn: Number(myCoin.wallet[ii].frozen),
+                    qty: Number(myCoin.wallet[ii].quantity)
                     }
                     quantity += wallet.frzn + wallet.qty;
                 }
