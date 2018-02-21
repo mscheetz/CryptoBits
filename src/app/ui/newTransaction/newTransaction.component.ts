@@ -21,7 +21,10 @@ export class NewTransactionComponent implements OnInit {
   private locs;
   private newTransaction: boolean = false;
   private trxType: TrxType;
-  private ico: boolean = false;
+  airdrop: boolean = false;
+  ico: boolean = false;
+  buy: boolean = false;
+  sell: boolean = false;
   //@Output() NewTrx = new EventEmitter<Transaction>();
   @Input() private allCoins: Coin[];
 
@@ -34,34 +37,52 @@ export class NewTransactionComponent implements OnInit {
     
   }
   
-  public EnumToArray() {
+  EnumToArray() {
       this.locs = Object.keys(Location)
                         .filter(key => !isNaN(Number(Location[key])));
   }
 
-  public AddTransaction(){
+  AddTransaction(){
       //this.AddedApi.emit(this.apiInfo);
       //console.log(this.apiInfo);
+      this.transaction.type = TrxType[this.trxType];
+      if(this.trxType === TrxType.SELL) {
+        this.transaction.quantity = Number(this.transaction.quantity) * -1;
+      }
       this.userService.newTransaction(this.transaction);
       this.ToggleNewTrx(false);
   }
 
-  public ResetTrx() {
+  ResetTrx() {
     this.coinInfo = new CoinInformation();
     this.transaction = new Transaction();
     this.trxType = TrxType.NONE;
-    this.ico = false;
+    this.ResetTrxType();
   }
 
-  public ToggleNewTrx(state: boolean) {
+  ResetTrxType() {
+    this.ico = false;
+    this.buy = false;
+    this.sell = false;
+    this.airdrop = false;
+  }
+
+  ToggleNewTrx(state: boolean) {
     this.ResetTrx();
     this.newTransaction = state;
   }
 
-  public SetTrxType(type: TrxType) {
+  SetTrxType(type: TrxType) {
     this.trxType = type;
+    this.ResetTrxType();
     if(type === TrxType.ICO){
       this.ico = true;
+    } else if (type === TrxType.AIRDROP) {
+      this.airdrop = true;
+    } else if (type === TrxType.BUY) {
+      this.buy = true;
+    } else if (type === TrxType.SELL) {
+      this.sell = true;
     }
   }
 }
