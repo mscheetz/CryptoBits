@@ -4,5 +4,7 @@
 export enum TrxType {
     NONE,
     AIRDROP,
-    ICO    
+    ICO,
+    BUY,
+    SELL
 }
