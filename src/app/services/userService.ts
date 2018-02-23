@@ -9,11 +9,14 @@ import { Observable, BehaviorSubject } from "rxjs";
 import { Subject } from "rxjs/Subject";
 import { Injectable } from "@angular/core";
 import { of } from "rxjs/observable/of";
-
+import { NinetyNineCryptoApi } from "../apiAccess/ninetyNineCryptoApi";
+import { Coin } from "../classes/99Crypto/coin";
+   
 @Injectable()
 export class UserService {
     user: User;    
     coinList: Observable<DisplayCoin[]>;
+    allCoins: Coin[] = [];
     // private _coins: BehaviorSubject<DisplayCoin[]>;
     // private coinStore: {
     //     coins: DisplayCoin[]
@@ -22,16 +25,25 @@ export class UserService {
     private coinListAnnouncedSource = new Subject<DisplayCoin[]>();
     
     coinListAnnounced$ = this.coinListAnnouncedSource.asObservable();
-
-    constructor() {
+    
+    constructor(private c99Getter: NinetyNineCryptoApi) {
         // this.coinStore = { coins: [] };
         // this._coins = <BehaviorSubject<DisplayCoin[]>>new BehaviorSubject([]);
         // this.coinList = this._coins.asObservable();
         this.setDefaultUser();
+        this.getAllCoins();
+        this.getAllCoins();
     }
 
     createUser(first: string, last: string, email: string,  ){
         this.user = new User(UUID.UUID(), email, first, last, [], [], [], [], []);        
+    }
+    
+    getAllCoins() {
+        //let c99Getter = new NinetyNineCryptoApi();
+
+        this.c99Getter.getCoins()
+            .subscribe(coins => { this.allCoins = coins });
     }
 
     setDefaultUser(){
@@ -74,7 +86,8 @@ export class UserService {
         wallet.location = Location.Wallet;
     
         let newCoin: CoinInformation = new CoinInformation();
-        newCoin.name = newTrx.symbol;
+        let thisCoin: Coin = this.allCoins.find(a => a.symbol === newTrx.symbol);
+        newCoin.name = thisCoin.name;
         newCoin.symbol = newTrx.symbol;
         newCoin.wallet = [];
         newCoin.wallet.push(wallet);

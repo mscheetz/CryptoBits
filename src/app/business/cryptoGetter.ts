@@ -104,11 +104,11 @@ export class CryptoGetter {
      * Get all coin names/symbols
      */
     GetAllCoins() {
-        let nintyNineBuilder = new NinetyNineCryptoApi();
+        //let nintyNineBuilder = new NinetyNineCryptoApi();
 
-        nintyNineBuilder.getCoins().subscribe(data =>  {
-            this._allCoins = data 
-        });
+        // nintyNineBuilder.getCoins().subscribe(data =>  {
+        //     this._allCoins = data 
+        // });
     }
 
     /**
