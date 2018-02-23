@@ -10,6 +10,7 @@ import { NewTransactionComponent } from './ui/newTransaction/newTransaction.comp
 import { CryptoComponent } from './ui/crypto/crypto.component';
 import { UserService } from './services/userService';
 import { NinetyNineCryptoApi } from './apiAccess/ninetyNineCryptoApi';
+import { CryptoCompareApi } from './apiAccess/cryptoCompareApi';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { NinetyNineCryptoApi } from './apiAccess/ninetyNineCryptoApi';
   ],
   providers: [
     UserService,
-    NinetyNineCryptoApi
+    NinetyNineCryptoApi,
+    CryptoCompareApi
   ],
   bootstrap: [AppComponent]
 })
