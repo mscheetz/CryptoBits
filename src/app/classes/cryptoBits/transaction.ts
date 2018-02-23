@@ -1,9 +1,12 @@
+import { TrxType } from "./trxType";
+
 /**
  * Represents a transaction.
  */
 export class Transaction {
 
     private _symbol: string;
+    private _name: string;
     private _pair: string;
     private _type: string;
     private _date: Date;
@@ -13,6 +16,7 @@ export class Transaction {
     private _destination: string;
     private _trx_id: string;
     private _trx_source: string;
+    private _trxType: TrxType;
 
     get symbol(): string {
         return this._symbol;
@@ -20,6 +24,14 @@ export class Transaction {
 
     set symbol(value: string) {
         this._symbol = value;
+    }
+
+    get name(): string {
+        return this._name;
+    }
+
+    set name(value: string) {
+        this._name = value;
     }
 
     get pair(): string {
@@ -92,5 +104,13 @@ export class Transaction {
 
     set trx_source(value: string) {
         this._trx_source = value;
+    }
+
+    get trxType(): TrxType {
+        return this._trxType;
+    }
+
+    set trxType(value: TrxType) {
+        this._trxType = value;
     }
 }

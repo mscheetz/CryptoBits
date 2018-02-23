@@ -2,6 +2,7 @@
  * Enum of locations
  */
 export enum Location {
+    None,
     Altcoin,
     Binance,
     Bitfinex,
@@ -18,6 +19,6 @@ export enum Location {
     Poloniex,
     StocksExchange,
     Upcoin,
-    Wallet,
+    Address,
     ICO
 }

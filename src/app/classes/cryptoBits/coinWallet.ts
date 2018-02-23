@@ -11,7 +11,7 @@ export class CoinWallet {
     constructor () {
         this._quantity = 0;
         this._frozen = 0;
-        this._location = Location.Wallet;
+        this._location = Location.Address;
     }
 
     get quantity(): number {
