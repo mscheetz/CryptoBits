@@ -20,11 +20,12 @@ export class NewTransactionComponent implements OnInit {
   private location: Location;
   private locs;
   private newTransaction: boolean = false;
-  private trxType: TrxType;
+  private trxType: TrxType = TrxType.NONE;
   airdrop: boolean = false;
   ico: boolean = false;
   buy: boolean = false;
   sell: boolean = false;
+  xfer: boolean = false;
   //@Output() NewTrx = new EventEmitter<Transaction>();
   @Input() private allCoins: Coin[];
 
@@ -65,6 +66,7 @@ export class NewTransactionComponent implements OnInit {
     this.buy = false;
     this.sell = false;
     this.airdrop = false;
+    this.xfer = false;
   }
 
   ToggleNewTrx(state: boolean) {
@@ -83,6 +85,8 @@ export class NewTransactionComponent implements OnInit {
       this.buy = true;
     } else if (type === TrxType.SELL) {
       this.sell = true;
+    } else if (type === TrxType.XFEROUT) {
+      this.xfer = true;
     }
   }
 }

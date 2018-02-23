@@ -2,9 +2,12 @@
 <div [hidden]="!newTransaction">
     <h3>Add a new transaction:</h3>
     <button (click)="SetTrxType(3)">Buy</button> | <button (click)="SetTrxType(4)">Sell</button> | 
-    <button (click)="SetTrxType(2)">ICO</button> | <button (click)="SetTrxType(1)">Airdrop</button>
+    <button (click)="SetTrxType(2)">ICO</button> | <button (click)="SetTrxType(1)">Airdrop</button> | 
+    <button (click)="SetTrxType(6)">XFR</button>
+    <div *ngIf="ico || buy || sell || airdrop || xfer">
     <div>
-        <div>Coin/Token:</div><div><input [(ngModel)]="transaction.symbol" placeholder="coin/token" /></div>
+        <div>Coin/Token:</div><div><input [(ngModel)]="transaction.symbol" placeholder="symbol" /></div>
+        <div>Name:</div><div><input [(ngModel)]="transaction.name" placeholder="name" /></div>
         <div>Date: </div><div><input [(ngModel)]="transaction.date" placeholder="trx date" /></div>
         <div>Qty: </div><div><input [(ngModel)]="transaction.quantity" placeholder="quantity" /></div>
     </div>
@@ -17,6 +20,8 @@
     <div *ngIf="ico || buy || sell">
         <div>Price: </div><div><input [(ngModel)]="transaction.price" placeholder="pair" /></div>
     </div>
-    <input type="button" value="Add" (click)="AddTransaction()" />
+    </div>
+    <input type="button" value="Add" (click)="AddTransaction()" *ngIf="ico || buy || sell || airdrop || xfer "/>
+    <span *ngIf="!ico && !buy && !sell && !airdrop && !xfer"> | </span>
     <input type="button" value="Cancel" (click)="ToggleNewTrx(false)" />
 </div>

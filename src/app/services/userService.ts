@@ -11,12 +11,15 @@ import { Injectable } from "@angular/core";
 import { of } from "rxjs/observable/of";
 import { NinetyNineCryptoApi } from "../apiAccess/ninetyNineCryptoApi";
 import { Coin } from "../classes/99Crypto/coin";
-   
+import { CryptoCompareApi } from "../apiAccess/cryptoCompareApi";
+import { CryptoCompareCoin } from "../classes/cryptoCompare/CryptoCompareCoin";
+
 @Injectable()
 export class UserService {
     user: User;    
     coinList: Observable<DisplayCoin[]>;
     allCoins: Coin[] = [];
+    ccCoins: CryptoCompareCoin[] = [];
     // private _coins: BehaviorSubject<DisplayCoin[]>;
     // private coinStore: {
     //     coins: DisplayCoin[]
@@ -26,19 +29,24 @@ export class UserService {
     
     coinListAnnounced$ = this.coinListAnnouncedSource.asObservable();
     
-    constructor(private c99Getter: NinetyNineCryptoApi) {
+    constructor(private c99Getter: NinetyNineCryptoApi, private cryptoCompare: CryptoCompareApi) {
         // this.coinStore = { coins: [] };
         // this._coins = <BehaviorSubject<DisplayCoin[]>>new BehaviorSubject([]);
         // this.coinList = this._coins.asObservable();
         this.setDefaultUser();
-        this.getAllCoins();
-        this.getAllCoins();
+        //this.getCCCoins();
+       // this.getAllCoins();
+       // this.getAllCoins();
     }
 
     createUser(first: string, last: string, email: string,  ){
         this.user = new User(UUID.UUID(), email, first, last, [], [], [], [], []);        
     }
     
+    getCCCoins() {
+        this.cryptoCompare.getCoins().subscribe(coins => { this.ccCoins = coins });
+    }
+
     getAllCoins() {
         //let c99Getter = new NinetyNineCryptoApi();
 
@@ -83,11 +91,11 @@ export class UserService {
     
         let wallet: CoinWallet = new CoinWallet();
         wallet.quantity = newTrx.quantity;
-        wallet.location = Location.Wallet;
+        wallet.location = Location.Address;
     
         let newCoin: CoinInformation = new CoinInformation();
-        let thisCoin: Coin = this.allCoins.find(a => a.symbol === newTrx.symbol);
-        newCoin.name = thisCoin.name;
+        //let thisCoin: Coin = this.allCoins.find(a => a.symbol === newTrx.symbol);
+        newCoin.name = newTrx.name;
         newCoin.symbol = newTrx.symbol;
         newCoin.wallet = [];
         newCoin.wallet.push(wallet);
