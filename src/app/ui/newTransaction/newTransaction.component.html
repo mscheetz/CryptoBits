@@ -29,6 +29,8 @@
                 <option *ngFor="let loc of locs" [ngValue]="loc">{{ loc }}</option>
             </select>
         </div>
+        <div>Fee Amount: <input [(ngModel)]="transaction.fee" placeholder="amount" /></div>
+        <div>Fee Type: <input [(ngModel)]="transaction.feeSymbol" placeholder="symbol" /></div>
     </div>
     <div *ngIf="ico || buy || sell">
         <div>Price: </div><div><input [(ngModel)]="transaction.price" placeholder="pair" /></div>
