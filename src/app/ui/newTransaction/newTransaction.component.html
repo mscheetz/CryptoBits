@@ -17,6 +17,19 @@
     <div *ngIf="sell">
         <div>Sold With: </div><div><input [(ngModel)]="transaction.pair" placeholder="pair" /></div>
     </div>
+    <div *ngIf="buy || sell || xfer">
+        <div *ngIf="buy || sell">Location: </div>
+        <div *ngIf="xfer">From: </div>
+        <select [(ngModel)]="transaction.sourceLocation">
+            <option *ngFor="let loc of locs" [ngValue]="loc">{{ loc }}</option>
+        </select>
+        <div *ngIf="xfer">
+            <div>To: </div>
+            <select [(ngModel)]="transaction.destinationLocation">
+                <option *ngFor="let loc of locs" [ngValue]="loc">{{ loc }}</option>
+            </select>
+        </div>
+    </div>
     <div *ngIf="ico || buy || sell">
         <div>Price: </div><div><input [(ngModel)]="transaction.price" placeholder="pair" /></div>
     </div>

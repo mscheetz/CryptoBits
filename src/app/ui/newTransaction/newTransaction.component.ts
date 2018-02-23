@@ -41,6 +41,10 @@ export class NewTransactionComponent implements OnInit {
   EnumToArray() {
       this.locs = Object.keys(Location)
                         .filter(key => !isNaN(Number(Location[key])));
+      let idx = this.locs.indexOf("None");
+      this.locs.splice(idx,1);
+      idx = this.locs.indexOf("ICO");
+      this.locs.splice(idx,1);
   }
 
   AddTransaction(){

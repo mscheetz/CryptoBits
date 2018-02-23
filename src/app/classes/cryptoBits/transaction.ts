@@ -1,4 +1,5 @@
 import { TrxType } from "./trxType";
+import { Location } from "./location";
 
 /**
  * Represents a transaction.
@@ -12,11 +13,15 @@ export class Transaction {
     private _date: Date;
     private _quantity: number;
     private _price: number;
+    private _fee: number;
+    private _feeSymbol: string;
     private _source: string;
     private _destination: string;
-    private _trx_id: string;
-    private _trx_source: string;
     private _trxType: TrxType;
+    private _sourceLocation: Location;
+    private _destinationLocation: Location;
+    private _trxId: string;
+    private _trxSource: string;
 
     get symbol(): string {
         return this._symbol;
@@ -74,6 +79,22 @@ export class Transaction {
         this._price = value;
     }
 
+    get fee(): number {
+        return this._fee;
+    }
+
+    set fee(value: number) {
+        this._fee = value;
+    }
+
+    get feeSymbol(): string {
+        return this._feeSymbol;
+    }
+
+    set feeSymbol(value: string) {
+        this._feeSymbol = value;
+    }
+
     get source(): string {
         return this._source;
     }
@@ -90,20 +111,20 @@ export class Transaction {
         this._destination = value;
     }
 
-    get trx_id(): string {
-        return this._trx_id;
+    get trxId(): string {
+        return this._trxId;
     }
 
-    set trx_id(value: string) {
-        this._trx_id = value;
+    set trxId(value: string) {
+        this._trxId = value;
     }
 
-    get trx_source(): string {
-        return this._trx_source;
+    get trxSource(): string {
+        return this._trxSource;
     }
 
-    set trx_source(value: string) {
-        this._trx_source = value;
+    set trxSource(value: string) {
+        this._trxSource = value;
     }
 
     get trxType(): TrxType {
@@ -112,5 +133,21 @@ export class Transaction {
 
     set trxType(value: TrxType) {
         this._trxType = value;
+    }
+
+    get sourceLocation(): Location {
+        return this._sourceLocation;
+    }
+
+    set sourceLocation(value: Location) {
+        this._sourceLocation = value;
+    }
+
+    get destinationLocation(): Location {
+        return this._destinationLocation;
+    }
+
+    set destinationLocation(value: Location) {
+        this._destinationLocation = value;
     }
 }
