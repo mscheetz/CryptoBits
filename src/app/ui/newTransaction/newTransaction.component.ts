@@ -26,8 +26,12 @@ export class NewTransactionComponent implements OnInit {
   buy: boolean = false;
   sell: boolean = false;
   xfer: boolean = false;
+  trxSymbol: string = "";
+  trxLocation: Location = Location.None;
+  available: number = 0;
   //@Output() NewTrx = new EventEmitter<Transaction>();
   @Input() private allCoins: Coin[];
+  @Input() private myCoins: CoinInformation[];
 
   constructor(private userService: UserService) { 
     this.ToggleNewTrx(false);
@@ -38,6 +42,31 @@ export class NewTransactionComponent implements OnInit {
     
   }
   
+  onSymbolChanged($event){
+    this.trxSymbol = $event;
+    this.getAvailable();
+  }
+  
+  onLocChanged($event){
+    this.trxLocation = $event;
+    this.getAvailable();
+  }
+
+  getAvailable(){
+    let avail = 0;
+    if(this.trxSymbol !== "" && this.trxLocation !== Location.None) {
+      let coin = this.myCoins.find(m => m.symbol === this.trxSymbol);
+      if(coin) {
+        let wallet = coin.wallet.find(w => w.location === this.trxLocation);
+
+        if (wallet){
+          avail = wallet.quantity;
+        }
+      }
+    }
+    this.available = avail;
+  }
+
   EnumToArray() {
       this.locs = Object.keys(Location)
                         .filter(key => !isNaN(Number(Location[key])));
@@ -71,6 +100,9 @@ export class NewTransactionComponent implements OnInit {
     this.sell = false;
     this.airdrop = false;
     this.xfer = false;
+    this.trxSymbol = "";
+    this.trxLocation = Location.None;
+    this.available = 0;
   }
 
   ToggleNewTrx(state: boolean) {

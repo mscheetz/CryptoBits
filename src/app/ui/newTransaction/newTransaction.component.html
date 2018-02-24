@@ -6,21 +6,14 @@
     <button (click)="SetTrxType(6)">XFR</button>
     <div *ngIf="ico || buy || sell || airdrop || xfer">
     <div>
-        <div>Coin/Token:</div><div><input [(ngModel)]="transaction.symbol" placeholder="symbol" /></div>
+        <div>Coin/Token:</div><div><input [(ngModel)]="transaction.symbol" placeholder="symbol" (ngModelChange)="onSymbolChanged($event)"/></div>
         <div>Name:</div><div><input [(ngModel)]="transaction.name" placeholder="name" /></div>
         <div>Date: </div><div><input [(ngModel)]="transaction.date" placeholder="trx date" /></div>
-        <div>Qty: </div><div><input [(ngModel)]="transaction.quantity" placeholder="quantity" /></div>
-    </div>
-    <div *ngIf="ico || buy">
-        <div>Purchased With: </div><div><input [(ngModel)]="transaction.pair" placeholder="pair" /></div>
-    </div>
-    <div *ngIf="sell">
-        <div>Sold With: </div><div><input [(ngModel)]="transaction.pair" placeholder="pair" /></div>
     </div>
     <div *ngIf="buy || sell || xfer">
         <div *ngIf="buy || sell">Location: </div>
         <div *ngIf="xfer">From: </div>
-        <select [(ngModel)]="transaction.sourceLocation">
+        <select [(ngModel)]="transaction.sourceLocation" (ngModelChange)="onLocChanged($event)">
             <option *ngFor="let loc of locs" [ngValue]="loc">{{ loc }}</option>
         </select>
         <div *ngIf="xfer">
@@ -29,11 +22,25 @@
                 <option *ngFor="let loc of locs" [ngValue]="loc">{{ loc }}</option>
             </select>
         </div>
-        <div>Fee Amount: <input [(ngModel)]="transaction.fee" placeholder="amount" /></div>
-        <div>Fee Type: <input [(ngModel)]="transaction.feeSymbol" placeholder="symbol" /></div>
+    </div>
+    <div *ngIf="sell">
+        <div>Available: {{ available }}</div>
+    </div>
+    <div>
+        <div>Qty: </div><div><input [(ngModel)]="transaction.quantity" placeholder="quantity" /></div>
+    </div>
+    <div *ngIf="ico || buy">
+        <div>Purchased With: </div><div><input [(ngModel)]="transaction.pair" placeholder="pair" /></div>
+    </div>
+    <div *ngIf="sell">
+        <div>Sold With: </div><div><input [(ngModel)]="transaction.pair" placeholder="pair" /></div>
     </div>
     <div *ngIf="ico || buy || sell">
         <div>Price: </div><div><input [(ngModel)]="transaction.price" placeholder="pair" /></div>
+    </div>
+    <div *ngIf="buy || sell || xfer">
+        <div>Fee Amount: <input [(ngModel)]="transaction.fee" placeholder="amount" /></div>
+        <div>Fee Type: <input [(ngModel)]="transaction.feeSymbol" placeholder="symbol" /></div>
     </div>
     </div>
     <input type="button" value="Add" (click)="AddTransaction()" *ngIf="ico || buy || sell || airdrop || xfer "/>

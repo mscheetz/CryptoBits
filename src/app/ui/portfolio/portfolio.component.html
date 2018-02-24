@@ -10,7 +10,7 @@
 </div>
 <div>
     <h3>My Portfolio</h3>
-    <app-newTransaction [allCoins]="allCoins"></app-newTransaction>
+    <app-newTransaction [allCoins]="allCoins" [myCoins]="myCoins"></app-newTransaction>
     <div *ngIf="user.displayCoins.length > 0">
         <app-crypto *ngFor="let coin of user.displayCoins" [coin]="coin"></app-crypto>
     </div>

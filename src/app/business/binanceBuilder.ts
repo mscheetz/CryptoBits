@@ -164,8 +164,8 @@ export class BinanceBuilder {
             trx.type = String(order.type);
             trx.date = order.timestamp;
             trx.quantity = order.executedQuantity;
-            trx.trx_id = String(order.id);
-            trx.trx_source = "binance";
+            trx.trxId = String(order.id);
+            trx.trxSource = "binance";
 
             trxList.push(trx);
         }
@@ -186,8 +186,8 @@ export class BinanceBuilder {
             trx.type = "DEPOSIT";
             trx.date = this._helper.GetDateFromUnix(deposit.insertTime);
             trx.quantity = deposit.amount;
-            trx.trx_id = deposit.txId;
-            trx.trx_source = deposit.address;
+            trx.trxId = deposit.txId;
+            trx.trxSource = deposit.address;
 
             trxList.push(trx);
         }
@@ -208,8 +208,8 @@ export class BinanceBuilder {
             trx.type = "WITHDRAW";
             trx.date = this._helper.GetDateFromUnix(withdraw.applyTime);
             trx.quantity = withdraw.amount;
-            trx.trx_id = withdraw.txId;
-            trx.trx_source = withdraw.address;
+            trx.trxId = withdraw.txId;
+            trx.trxSource = withdraw.address;
 
             trxList.push(trx);
         }

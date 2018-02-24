@@ -13,6 +13,7 @@ import { NinetyNineCryptoApi } from "../apiAccess/ninetyNineCryptoApi";
 import { Coin } from "../classes/99Crypto/coin";
 import { CryptoCompareApi } from "../apiAccess/cryptoCompareApi";
 import { CryptoCompareCoin } from "../classes/cryptoCompare/CryptoCompareCoin";
+import { Wallet } from "../classes/cryptoBits/wallet";
 
 @Injectable()
 export class UserService {
@@ -91,8 +92,12 @@ export class UserService {
     
         let wallet: CoinWallet = new CoinWallet();
         wallet.quantity = newTrx.quantity;
-        wallet.location = Location.Address;
+        wallet.location = newTrx.sourceLocation;
     
+        let wallett: Wallet = new Wallet();
+        wallett.location = newTrx.sourceLocation;
+        wallett.name = Location[newTrx.sourceLocation];
+
         let newCoin: CoinInformation = new CoinInformation();
         //let thisCoin: Coin = this.allCoins.find(a => a.symbol === newTrx.symbol);
         newCoin.name = newTrx.name;
