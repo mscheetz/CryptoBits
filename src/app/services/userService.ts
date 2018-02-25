@@ -14,6 +14,9 @@ import { Coin } from "../classes/99Crypto/coin";
 import { CryptoCompareApi } from "../apiAccess/cryptoCompareApi";
 import { CryptoCompareCoin } from "../classes/cryptoCompare/CryptoCompareCoin";
 import { Wallet } from "../classes/cryptoBits/wallet";
+import { TrxType } from "../classes/cryptoBits/trxType";
+import { CoinBuy } from "../classes/cryptoBits/coinBuy";
+import { CoinSale } from "../classes/cryptoBits/coinSale";
 
 @Injectable()
 export class UserService {
@@ -87,48 +90,163 @@ export class UserService {
         return this.subject.asObservable();
     }
 
+    /**
+     * Process a new transaction
+     * @param newTrx        New Transaction
+     */
     newTransaction(newTrx: Transaction){
         this.user.transaction.push(newTrx);
-    
-        let wallet: CoinWallet = new CoinWallet();
-        wallet.quantity = newTrx.quantity;
-        wallet.location = newTrx.sourceLocation;
-    
-        let wallett: Wallet = new Wallet();
-        wallett.location = newTrx.sourceLocation;
-        wallett.name = Location[newTrx.sourceLocation];
 
-        let newCoin: CoinInformation = new CoinInformation();
-        //let thisCoin: Coin = this.allCoins.find(a => a.symbol === newTrx.symbol);
-        newCoin.name = newTrx.name;
-        newCoin.symbol = newTrx.symbol;
-        newCoin.wallet = [];
-        newCoin.wallet.push(wallet);
-    
+        let newCoin: CoinInformation = this.getCoin(newTrx);
+
         let myCoin: CoinInformation = this.user.coinInfo.find(c => c.symbol === newCoin.symbol);
     
-        if(myCoin == null){
+        if(!myCoin) {
           this.user.coinInfo.push(newCoin);
         } else {
           this.user.coinInfo.forEach(function(coin){
             if(coin.symbol === newCoin.symbol) {
-              for(var i = 0; i< coin.wallet.length; i++){
-                let coinFound: boolean = false;
-                if(coin.wallet[i].location === wallet.location){
-                  let newQty = Number(coin.wallet[i].quantity) + Number(wallet.quantity);
-                  coin.wallet[i].quantity = newQty;
-                  coinFound = true;
-                }
-                if(!coinFound) {
-                  coin.wallet.push(wallet);
-                }
-              }
+              //for(var i = 0; i< coin.wallet.length; i++){
+              //  let coinFound: boolean = false;
+                coin.wallet = newCoin.wallet;
+              //  if(coin.wallet[i].location === newCoin.wallet.location){
+              //    let newQty = Number(coin.wallet[i].quantity) + Number(wallettt.quantity);
+              //    coin.wallet[i].quantity = newQty;
+              //    coinFound = true;
+              //  }
+              //  if(!coinFound) {
+              //    coin.wallet.push(wallettt);
+              //  }
+              //}
             }
           });
         }
         this.updateDisplayCoins();
     }
 
+    /**
+     * Get a coin for a new transaction
+     * @param newTrx        New Transaction
+     */
+    getCoin(newTrx: Transaction): CoinInformation {
+        let idx: number = this.user.coinInfo.findIndex(c => c.symbol === newTrx.symbol);
+
+        let coin: CoinInformation;
+
+        if(idx < 0) {
+            coin = this.createCoin(newTrx);
+        } else {
+            coin = this.user.coinInfo[idx];
+
+            let walletIdx: number = this.getWalletIndex(coin, newTrx.sourceLocation);
+
+            if (walletIdx < 0) {
+                let buys: CoinBuy[] = this.createCoinBuys(newTrx);
+                let newWallet = this.createCoinWallet(newTrx, buys);
+                
+                coin.wallet.push(newWallet);
+            } else {
+                let buy: CoinBuy = this.createCoinBuy(newTrx);
+
+                coin.wallet[walletIdx].coinBuy.push(buy);
+            }
+        }
+
+        return coin;
+    }
+
+    /**
+     * Get Index of a wallet for a coin for a new transaction
+     * @param coin          Current Coin
+     * @param location      New Transaction Source Location
+     */
+    getWalletIndex(coin: CoinInformation, location: Location): number {
+        let idx: number = coin.wallet.findIndex(w => w.location === location);
+
+        return idx; 
+    }
+
+    /**
+     * Create a coin for a new transaction
+     * @param newTrx        New Transaction
+     */
+    createCoin(newTrx: Transaction): CoinInformation {
+        let coin: CoinInformation = new CoinInformation();
+        let buys: CoinBuy[] = this.createCoinBuys(newTrx);
+        let wallets: Wallet[] = [];
+        wallets.push(this.createCoinWallet(newTrx, buys));
+
+        coin.name = newTrx.name;
+        coin.symbol = newTrx.symbol;
+        coin.wallet = wallets;
+
+        return coin;
+    }
+
+    /**
+     * Create a wallet for a new transaction
+     * @param newTrx        New Transaction
+     * @param buys          CoinBuy array
+     */
+    createCoinWallet(newTrx: Transaction, buys: CoinBuy[]): Wallet {
+        let wallet: Wallet = new Wallet();
+        wallet.location = newTrx.sourceLocation;
+        wallet.name = Location[newTrx.sourceLocation];
+        wallet.coinBuy = buys;
+
+        return wallet;
+    }
+
+    /**
+     * Create a coin sale for a new transaction
+     * @param newTrx        New Transaction
+     * @param saleQuantity  Sale quantity
+     */
+    createCoinSale(newTrx: Transaction, saleQuantity: number): CoinSale {
+        let sale: CoinSale = new CoinSale();
+        sale.date = newTrx.date;
+        sale.fee = newTrx.fee;
+        sale.feeSymbol = newTrx.feeSymbol;
+        sale.pair = newTrx.pair;
+        sale.price = newTrx.price;
+        sale.quantity = saleQuantity;
+        sale.trxType = newTrx.trxType;
+
+        return sale;
+    }
+
+    /**
+     * Create a CoinBuy array for a new transaction
+     * @param newTrx        New Transaction
+     */
+    createCoinBuys(newTrx: Transaction): CoinBuy[] {
+        let buys: CoinBuy[] = [];
+        buys.push(this.createCoinBuy(newTrx));
+
+        return buys;
+    }
+
+    /**
+     * Create a coin buy for a new transaction
+     * @param newTrx        New Transaction
+     */
+    createCoinBuy(newTrx: Transaction): CoinBuy {
+        let buy: CoinBuy = new CoinBuy();
+        buy.date = newTrx.date;
+        buy.fee = newTrx.fee;
+        buy.feeSymbol = newTrx.feeSymbol;
+        buy.pair = newTrx.pair;
+        buy.price = newTrx.price;
+        buy.quantity = newTrx.quantity;
+        buy.trxType = newTrx.trxType;
+        buy.coinSell = [];
+
+        return buy;
+    }
+
+    /**
+     * Update display coins
+     */
     updateDisplayCoins() {
         let coins = [];
         //this.coinStore = { coins: [] };
@@ -142,14 +260,32 @@ export class UserService {
                 coin.ticker = myCoin.ticker;
                 coin.locations = myCoin.wallet.length;
                 let quantity:number = 0;
+                let lowBuy: number = 0.00000000;
+                let highBuy: number = 0.00000000;
+                let avgBuy: number = 0.00000000;
+                let totalBought: number = 0.0000000;
                 for(var ii = 0; ii < myCoin.wallet.length; ii ++) {
-                    let wallet = {
-                    frzn: Number(myCoin.wallet[ii].frozen),
-                    qty: Number(myCoin.wallet[ii].quantity)
+                    for(var iii = 0; iii < myCoin.wallet[ii].coinBuy.length; iii ++) {
+                        let coinBuy: CoinBuy = myCoin.wallet[ii].coinBuy[iii];
+                        let buyPrice: number = Number(coinBuy.price);
+                        let buyQty: number = Number(coinBuy.quantity);
+                        if(buyQty !== 0){
+                            if(lowBuy === 0 || lowBuy > buyPrice)
+                                lowBuy = buyPrice;
+                            
+                            if(highBuy < buyPrice)
+                                highBuy = buyPrice;
+                            
+                            totalBought += (buyPrice * buyQty);
+                            quantity += buyQty;
+                        }
                     }
-                    quantity += wallet.frzn + wallet.qty;
                 }
+                avgBuy = Number(totalBought)/Number(quantity);
                 coin.quantity = quantity;
+                coin.low = lowBuy;
+                coin.high = highBuy;
+                coin.avg = avgBuy;
 
                 coins.push(coin);
             }

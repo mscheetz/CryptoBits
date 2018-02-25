@@ -164,30 +164,32 @@ export class CryptoGetter {
      */
     public ApiCoinToCoinInfo(): CoinInformation[] {
         let coinInfo: CoinInformation[] = [];
-        for(let coin of this._apiCoins) {
-            let wallet = new CoinWallet;
-            wallet.quantity = coin.quantity;
-            wallet.frozen = coin.frozen;
-            wallet.location = coin.location;
+        // TODO: Need to fix for new CoinBuy/CoinSale objects
+        
+        // for(let coin of this._apiCoins) {
+        //     let wallet = new CoinWallet;
+        //     wallet.quantity = coin.quantity;
+        //     wallet.frozen = coin.frozen;
+        //     wallet.location = coin.location;
 
-            if(this._helper.ArrayContains(this._coinInfo, "symbol", coin.symbol)) {
-                let coinI = new CoinInformation;
-                coinI.symbol = coin.symbol;
-                coinI.wallet = [];
-                coinI.wallet.push(wallet);
+        //     if(this._helper.ArrayContains(this._coinInfo, "symbol", coin.symbol)) {
+        //         let coinI = new CoinInformation;
+        //         coinI.symbol = coin.symbol;
+        //         coinI.wallet = [];
+        //         coinI.wallet.push(wallet);
     
-                coinInfo.push(coinI);
-            } else {
-                let i = this._helper.GetIndex(this._coinInfo, "symbol", coin.symbol);
+        //         coinInfo.push(coinI);
+        //     } else {
+        //         let i = this._helper.GetIndex(this._coinInfo, "symbol", coin.symbol);
 
-                for(let coinWallet of this._coinInfo[i].wallet) {
-                    if(coinWallet.location === wallet.location) {
-                        coinWallet.frozen = wallet.frozen;
-                        coinWallet.quantity = wallet.quantity;
-                    }
-                }
-            }
-        }
+        //         for(let coinWallet of this._coinInfo[i].wallet) {
+        //             if(coinWallet.location === wallet.location) {
+        //                 coinWallet.frozen = wallet.frozen;
+        //                 coinWallet.quantity = wallet.quantity;
+        //             }
+        //         }
+        //     }
+        // }
         return coinInfo;
     }
 }

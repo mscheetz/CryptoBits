@@ -7,10 +7,16 @@ export class DisplayCoin {
     private _quantity: number;
     private _locations: number;
     private _ticker: CoinTicker;
+    private _low: number;
+    private _high: number;
+    private _avg: number;
 
     constructor() {
-        this._quantity = 0;
-        this._locations = 0;
+        this._quantity = Number(0);
+        this._locations = Number(0);
+        this._low = Number(0.00000000);
+        this._high = Number(0.00000000);
+        this._avg = Number(0.00000000);
         this._ticker = new CoinTicker();
     }
 
@@ -52,5 +58,29 @@ export class DisplayCoin {
 
     set ticker(value: CoinTicker) {
         this._ticker = value;
+    }
+
+    get low(): number {
+        return this._low;
+    }
+
+    set low(value: number) {
+        this._low = value;
+    }
+
+    get high(): number {
+        return this._high;
+    }
+
+    set high(value: number) {
+        this._high = value;
+    }
+
+    get avg(): number {
+        return this._avg;
+    }
+
+    set avg(value: number) {
+        this._avg = value;
     }
 }

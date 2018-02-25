@@ -7,6 +7,7 @@ import { Transaction } from '../../classes/cryptoBits/transaction';
 import { TrxType } from '../../classes/cryptoBits/trxType';
 import { Coin } from '../../classes/99Crypto/coin';
 import { UserService } from '../../services/userService';
+import _ = require('lodash');
 
 @Component({
   selector: 'app-newTransaction',
@@ -60,7 +61,13 @@ export class NewTransactionComponent implements OnInit {
         let wallet = coin.wallet.find(w => w.location === this.trxLocation);
 
         if (wallet){
-          avail = wallet.quantity;
+          let qty: number = 0;
+          wallet.coinBuy.forEach(function(coinBuy){
+            let buyQty = Number(coinBuy.quantity);
+            qty += buyQty;
+          });
+          avail = qty;
+          //avail = wallet.quantity;
         }
       }
     }
