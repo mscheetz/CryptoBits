@@ -12,6 +12,8 @@ export class CoinSale {
     private _fee: number;
     private _feeSymbol: string;
     private _trxType: TrxType;
+    private _qtySold: number;
+    private _processed: boolean;
 
     constructor() {
         this._quantity = 0;
@@ -21,6 +23,8 @@ export class CoinSale {
         this._fee = 0;
         this._feeSymbol = "";
         this._trxType = TrxType.NONE;
+        this._qtySold = 0;
+        this._processed = false;
     }
 
     get quantity(): number {
@@ -77,5 +81,21 @@ export class CoinSale {
 
     set trxType(value: TrxType) {
         this._trxType = value;
+    }
+
+    get qtySold(): number {
+        return this._qtySold;
+    }
+
+    set qtySold(value: number) {
+        this._qtySold = value;
+    }
+
+    get processed(): boolean {
+        return this._processed;
+    }
+
+    set processed(value: boolean) {
+        this._processed = value;
     }
 }

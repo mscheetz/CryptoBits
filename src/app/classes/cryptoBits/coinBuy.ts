@@ -14,6 +14,7 @@ export class CoinBuy {
     private _fee: number;
     private _feeSymbol: string;
     private _trxType: TrxType;
+    private _available: number;
 
     constructor() {
         this._quantity = 0;
@@ -24,6 +25,7 @@ export class CoinBuy {
         this._fee = 0;
         this._feeSymbol = "";
         this._trxType = TrxType.NONE;
+        this._available = 0;
     }
 
     get quantity(): number {
@@ -88,5 +90,13 @@ export class CoinBuy {
 
     set trxType(value: TrxType) {
         this._trxType = value;
+    }
+
+    get available(): number {
+        return this._available;
+    }
+
+    set available(value: number) {
+        this._available = value;
     }
 }

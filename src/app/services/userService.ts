@@ -24,10 +24,6 @@ export class UserService {
     coinList: Observable<DisplayCoin[]>;
     allCoins: Coin[] = [];
     ccCoins: CryptoCompareCoin[] = [];
-    // private _coins: BehaviorSubject<DisplayCoin[]>;
-    // private coinStore: {
-    //     coins: DisplayCoin[]
-    // };
     private subject = new Subject<any>();
     private coinListAnnouncedSource = new Subject<DisplayCoin[]>();
     
@@ -43,14 +39,26 @@ export class UserService {
        // this.getAllCoins();
     }
 
+    /**
+     * Create a new user
+     * @param first         First Name
+     * @param last          Last Name
+     * @param email         Email address
+     */
     createUser(first: string, last: string, email: string,  ){
         this.user = new User(UUID.UUID(), email, first, last, [], [], [], [], []);        
     }
     
+    /**
+     * Get coins from Crypto Compare
+     */
     getCCCoins() {
         this.cryptoCompare.getCoins().subscribe(coins => { this.ccCoins = coins });
     }
 
+    /**
+     * Get coins from 99Cryptos
+     */
     getAllCoins() {
         //let c99Getter = new NinetyNineCryptoApi();
 
@@ -58,6 +66,10 @@ export class UserService {
             .subscribe(coins => { this.allCoins = coins });
     }
 
+    /**
+     * Set a default user 
+     * For testing only
+     */
     setDefaultUser(){
         this.user = new User(
           '1',                    // id
@@ -72,21 +84,24 @@ export class UserService {
         );
     }
 
+    /**
+     * Get the current user (Observable)
+     */
     getUser(): Observable<User> {
         return of(this.user);
     }
 
+    /**
+     * Announcement for DisplayCoins
+     */
     announceDisplayCoins() {
         this.coinListAnnouncedSource.next();
     }
 
-    getDisplayCoins(): Observable<any> {//: Observable<DisplayCoin[]> {
-        //return of(this.coins);
-        // return new Observable(observer => {
-        //     //this.coins;
-        //     observer.next(this.coins);            
-        //   });/
-        //return this._coins.next(Object.assign({}, this.coinStore).coins);
+    /**
+     * Get display coins (Observable)
+     */
+    getDisplayCoins(): Observable<any> {
         return this.subject.asObservable();
     }
 
@@ -104,22 +119,24 @@ export class UserService {
         if(!myCoin) {
           this.user.coinInfo.push(newCoin);
         } else {
-          this.user.coinInfo.forEach(function(coin){
-            if(coin.symbol === newCoin.symbol) {
-              //for(var i = 0; i< coin.wallet.length; i++){
-              //  let coinFound: boolean = false;
-                coin.wallet = newCoin.wallet;
-              //  if(coin.wallet[i].location === newCoin.wallet.location){
-              //    let newQty = Number(coin.wallet[i].quantity) + Number(wallettt.quantity);
-              //    coin.wallet[i].quantity = newQty;
-              //    coinFound = true;
-              //  }
-              //  if(!coinFound) {
-              //    coin.wallet.push(wallettt);
-              //  }
-              //}
-            }
-          });
+            for(var i = 0; i < this.user.coinInfo.length; i ++) {
+                let coin: CoinInformation = this.user.coinInfo[i];
+                
+                if(coin.symbol === newCoin.symbol) {
+                //for(var i = 0; i< coin.wallet.length; i++){
+                //  let coinFound: boolean = false;
+                    coin.wallet = newCoin.wallet;
+                //  if(coin.wallet[i].location === newCoin.wallet.location){
+                //    let newQty = Number(coin.wallet[i].quantity) + Number(wallettt.quantity);
+                //    coin.wallet[i].quantity = newQty;
+                //    coinFound = true;
+                //  }
+                //  if(!coinFound) {
+                //    coin.wallet.push(wallettt);
+                //  }
+                //}
+                }
+          }
         }
         this.updateDisplayCoins();
     }
@@ -149,6 +166,13 @@ export class UserService {
                 let buy: CoinBuy = this.createCoinBuy(newTrx);
 
                 coin.wallet[walletIdx].coinBuy.push(buy);
+            }
+
+            if(newTrx.trxType === TrxType.SELL) {
+                walletIdx = this.getWalletIndex(coin, newTrx.sourceLocation);
+                let buys: CoinBuy[] = coin.wallet[walletIdx].coinBuy;
+
+                coin.wallet[walletIdx].coinBuy = this.sellCoins(buys, newTrx);
             }
         }
 
@@ -240,8 +264,38 @@ export class UserService {
         buy.quantity = newTrx.quantity;
         buy.trxType = newTrx.trxType;
         buy.coinSell = [];
+        buy.available = newTrx.quantity;
 
         return buy;
+    }
+
+    /**
+     * Process a coin sale transaction
+     * 
+     * Not processing correctly need to fix
+     */
+    sellCoins(buys: CoinBuy[], newTrx: Transaction): CoinBuy[] {        
+        let sellQty = Number(newTrx.quantity);
+        for(var i = 0; i < buys.length; i ++) {
+            let buy: CoinBuy = buys[i];
+
+            if (buy.available > 0 && sellQty > 0) {
+                let available = Number(buy.available);
+                if(sellQty >= available) {
+                    buy.available = 0;
+                    sellQty = sellQty - available;
+                    let coinSale: CoinSale = this.createCoinSale(newTrx, available);
+                    buy.coinSell.push(coinSale);
+                } else if (available > sellQty) {
+                    buy.available = (available - sellQty);
+                    let coinSale: CoinSale = this.createCoinSale(newTrx, sellQty);
+                    buy.coinSell.push(coinSale);
+                    sellQty = 0;
+                }
+            }
+        }
+
+        return buys;
     }
 
     /**
@@ -267,17 +321,19 @@ export class UserService {
                 for(var ii = 0; ii < myCoin.wallet.length; ii ++) {
                     for(var iii = 0; iii < myCoin.wallet[ii].coinBuy.length; iii ++) {
                         let coinBuy: CoinBuy = myCoin.wallet[ii].coinBuy[iii];
-                        let buyPrice: number = Number(coinBuy.price);
-                        let buyQty: number = Number(coinBuy.quantity);
-                        if(buyQty !== 0){
-                            if(lowBuy === 0 || lowBuy > buyPrice)
-                                lowBuy = buyPrice;
-                            
-                            if(highBuy < buyPrice)
-                                highBuy = buyPrice;
-                            
-                            totalBought += (buyPrice * buyQty);
-                            quantity += buyQty;
+                        if(coinBuy.available > 0) {
+                            let buyPrice: number = Number(coinBuy.price);
+                            let buyQty: number = Number(coinBuy.available);
+                            if(buyQty !== 0){
+                                if(lowBuy === 0 || lowBuy > buyPrice)
+                                    lowBuy = buyPrice;
+                                
+                                if(highBuy < buyPrice)
+                                    highBuy = buyPrice;
+                                
+                                totalBought += (buyPrice * buyQty);
+                                quantity += buyQty;
+                            }
                         }
                     }
                 }
