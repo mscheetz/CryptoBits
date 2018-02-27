@@ -84,12 +84,10 @@ export class NewTransactionComponent implements OnInit {
   }
 
   AddTransaction(){
-      //this.AddedApi.emit(this.apiInfo);
-      //console.log(this.apiInfo);
-      this.transaction.type = TrxType[this.trxType];
-      if(this.trxType === TrxType.SELL) {
-        this.transaction.quantity = Number(this.transaction.quantity) * -1;
-      }
+      this.transaction.fee = Number(this.transaction.fee);
+      this.transaction.price = Number(this.transaction.price);
+      this.transaction.quantity = Number(this.transaction.quantity);
+      this.transaction.trxType = this.trxType;
       this.userService.newTransaction(this.transaction);
       this.ToggleNewTrx(false);
   }

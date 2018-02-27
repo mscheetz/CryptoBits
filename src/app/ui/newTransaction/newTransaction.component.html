@@ -36,7 +36,7 @@
         <div>Sold With: </div><div><input [(ngModel)]="transaction.pair" placeholder="pair" /></div>
     </div>
     <div *ngIf="ico || buy || sell">
-        <div>Price: </div><div><input [(ngModel)]="transaction.price" placeholder="pair" /></div>
+        <div>Price: </div><div><input [(ngModel)]="transaction.price" placeholder="price" /></div>
     </div>
     <div *ngIf="buy || sell || xfer">
         <div>Fee Amount: <input [(ngModel)]="transaction.fee" placeholder="amount" /></div>
