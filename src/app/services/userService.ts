@@ -157,18 +157,16 @@ export class UserService {
 
             let walletIdx: number = this.getWalletIndex(coin, newTrx.sourceLocation);
 
-            if (walletIdx < 0) {
+            if (walletIdx < 0 && newTrx.trxType === TrxType.BUY) {
                 let buys: CoinBuy[] = this.createCoinBuys(newTrx);
                 let newWallet = this.createCoinWallet(newTrx, buys);
                 
                 coin.wallet.push(newWallet);
-            } else {
+            } else if (newTrx.trxType === TrxType.BUY) {
                 let buy: CoinBuy = this.createCoinBuy(newTrx);
 
                 coin.wallet[walletIdx].coinBuy.push(buy);
-            }
-
-            if(newTrx.trxType === TrxType.SELL) {
+            } else if (newTrx.trxType === TrxType.SELL) {
                 walletIdx = this.getWalletIndex(coin, newTrx.sourceLocation);
                 let buys: CoinBuy[] = coin.wallet[walletIdx].coinBuy;
 
