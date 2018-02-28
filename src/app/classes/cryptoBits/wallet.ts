@@ -1,17 +1,16 @@
 import { Location } from "./location";
 import { CoinBuy } from "./coinBuy";
+import { Address } from "./address";
 
 export class Wallet {
     private _location: Location;
-    private _name: string;
-    private _address: string;
     private _coinBuy: CoinBuy[];
+    private _address: Address;
 
     constructor() {
         this._location = Location.None;
-        this._name = "";
-        this._address = "";
         this._coinBuy = [];
+        this._address = new Address();
     }
 
     get location(): Location {
@@ -22,19 +21,11 @@ export class Wallet {
         this._location = value;
     }
 
-    get name(): string {
-        return this._name;
-    }
-
-    set name(value: string) {
-        this._name = value;
-    }
-
-    get address(): string {
+    get address(): Address {
         return this._address;
     }
 
-    set address(value: string) {
+    set address(value: Address) {
         this._address = value;
     }
 
@@ -45,4 +36,6 @@ export class Wallet {
     set coinBuy(value: CoinBuy[]) {
         this._coinBuy = value;
     }
+
+
 }
