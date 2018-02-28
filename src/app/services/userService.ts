@@ -17,6 +17,7 @@ import { Wallet } from "../classes/cryptoBits/wallet";
 import { TrxType } from "../classes/cryptoBits/trxType";
 import { CoinBuy } from "../classes/cryptoBits/coinBuy";
 import { CoinSale } from "../classes/cryptoBits/coinSale";
+import { Address } from "../classes/cryptoBits/address";
 
 @Injectable()
 export class UserService {
@@ -123,18 +124,7 @@ export class UserService {
                 let coin: CoinInformation = this.user.coinInfo[i];
                 
                 if(coin.symbol === newCoin.symbol) {
-                //for(var i = 0; i< coin.wallet.length; i++){
-                //  let coinFound: boolean = false;
                     coin.wallet = newCoin.wallet;
-                //  if(coin.wallet[i].location === newCoin.wallet.location){
-                //    let newQty = Number(coin.wallet[i].quantity) + Number(wallettt.quantity);
-                //    coin.wallet[i].quantity = newQty;
-                //    coinFound = true;
-                //  }
-                //  if(!coinFound) {
-                //    coin.wallet.push(wallettt);
-                //  }
-                //}
                 }
           }
         }
@@ -155,7 +145,7 @@ export class UserService {
         } else {
             coin = this.user.coinInfo[idx];
 
-            let walletIdx: number = this.getWalletIndex(coin, newTrx.sourceLocation);
+            let walletIdx: number = this.getWalletIndex(coin, newTrx.sourceLocation, newTrx.sourceAddress.address);
 
             if (walletIdx < 0 && newTrx.trxType === TrxType.BUY) {
                 let buys: CoinBuy[] = this.createCoinBuys(newTrx);
@@ -167,7 +157,7 @@ export class UserService {
 
                 coin.wallet[walletIdx].coinBuy.push(buy);
             } else if (newTrx.trxType === TrxType.SELL) {
-                walletIdx = this.getWalletIndex(coin, newTrx.sourceLocation);
+                walletIdx = this.getWalletIndex(coin, newTrx.sourceLocation, newTrx.sourceAddress.address);
                 let buys: CoinBuy[] = coin.wallet[walletIdx].coinBuy;
 
                 coin.wallet[walletIdx].coinBuy = this.sellCoins(buys, newTrx);
@@ -181,9 +171,16 @@ export class UserService {
      * Get Index of a wallet for a coin for a new transaction
      * @param coin          Current Coin
      * @param location      New Transaction Source Location
+     * @param address       Address to transfer to
      */
-    getWalletIndex(coin: CoinInformation, location: Location): number {
-        let idx: number = coin.wallet.findIndex(w => w.location === location);
+    getWalletIndex(coin: CoinInformation, location: Location, address: string): number {
+        let idx: number = -1;
+
+        if(location === Location.Address) {
+            idx = coin.wallet.findIndex(w => w.location === location && w.address.address == address)
+        } else {
+            idx = coin.wallet.findIndex(w => w.location === location);
+        }
 
         return idx; 
     }
@@ -213,7 +210,8 @@ export class UserService {
     createCoinWallet(newTrx: Transaction, buys: CoinBuy[]): Wallet {
         let wallet: Wallet = new Wallet();
         wallet.location = newTrx.sourceLocation;
-        wallet.name = Location[newTrx.sourceLocation];
+        wallet.address = newTrx.sourceAddress;
+        //wallet.name = Location[newTrx.sourceLocation];
         wallet.coinBuy = buys;
 
         return wallet;

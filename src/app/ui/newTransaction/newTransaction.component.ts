@@ -8,6 +8,7 @@ import { TrxType } from '../../classes/cryptoBits/trxType';
 import { Coin } from '../../classes/99Crypto/coin';
 import { UserService } from '../../services/userService';
 import _ = require('lodash');
+import { Address } from '../../classes/cryptoBits/address';
 
 @Component({
   selector: 'app-newTransaction',
@@ -19,14 +20,17 @@ export class NewTransactionComponent implements OnInit {
   private coinInfo: CoinInformation;
   private transaction: Transaction;
   private location: Location;
-  private locs;
+  private locationList;
   private newTransaction: boolean = false;
   private trxType: TrxType = TrxType.NONE;
+  private addressList: Address[];
   airdrop: boolean = false;
   ico: boolean = false;
   buy: boolean = false;
   sell: boolean = false;
   xfer: boolean = false;
+  srcAddress: boolean = false
+  destAddress: boolean = false
   trxSymbol: string = "";
   trxLocation: Location = Location.None;
   available: number = 0;
@@ -35,8 +39,9 @@ export class NewTransactionComponent implements OnInit {
   @Input() private myCoins: CoinInformation[];
 
   constructor(private userService: UserService) { 
-    this.ToggleNewTrx(false);
-    this.EnumToArray();
+    this.toggleNewTrx(false);
+    this.enumToArray();
+    this.getAddresses();
   }
 
   ngOnInit() {
@@ -48,9 +53,20 @@ export class NewTransactionComponent implements OnInit {
     this.getAvailable();
   }
   
-  onLocChanged($event){
+  onSrcLocChanged($event){
     this.trxLocation = $event;
     this.getAvailable();
+    this.srcAddress = false;
+    if (this.trxLocation === Location.Address ) {
+      this.srcAddress = true;
+    }
+  }
+
+  onDestLocChanged() {
+    this.destAddress = false;
+    if (this.transaction.destinationLocation === Location.Address ) {
+      this.destAddress = true;
+    }
   }
 
   getAvailable(){
@@ -74,32 +90,56 @@ export class NewTransactionComponent implements OnInit {
     this.available = avail;
   }
 
-  EnumToArray() {
-      this.locs = Object.keys(Location)
+  enumToArray() {
+      this.locationList = Object.keys(Location)
                         .filter(key => !isNaN(Number(Location[key])));
-      let idx = this.locs.indexOf("None");
-      this.locs.splice(idx,1);
-      idx = this.locs.indexOf("ICO");
-      this.locs.splice(idx,1);
+      let idx = this.locationList.indexOf("None");
+      this.locationList.splice(idx,1);
+      idx = this.locationList.indexOf("ICO");
+      this.locationList.splice(idx,1);
   }
 
-  AddTransaction(){
+  getAddresses() {
+    this.addressList = [];
+    if(this.myCoins) {
+      for(var i = 0; i < this.myCoins.length; i ++) {
+        for(var ii = 0; ii < this.myCoins[i].wallet.length; ii ++) {
+          if(this.myCoins[i].wallet[ii].location === Location.Address) {
+            this.addressList.push(this.myCoins[i].wallet[ii].address);
+          }
+        }
+      }
+    }
+  }
+
+  addedAddress(data) {
+    if (data.locationType === "source") {
+      this.transaction.sourceAddress = data.address;
+    } else if (data.locationType === "destination") {
+      this.transaction.destinationAddress = data.address;
+    }
+  }
+
+  addTransaction(){
       this.transaction.fee = Number(this.transaction.fee);
       this.transaction.price = Number(this.transaction.price);
       this.transaction.quantity = Number(this.transaction.quantity);
       this.transaction.trxType = this.trxType;
+      if (this.transaction.sourceLocation !== Location.Address ) {
+        this.transaction.sourceAddress.name = this.transaction.sourceLocation + " " + this.transaction.symbol;
+      }
       this.userService.newTransaction(this.transaction);
-      this.ToggleNewTrx(false);
+      this.toggleNewTrx(false);
   }
 
-  ResetTrx() {
+  resetTrx() {
     this.coinInfo = new CoinInformation();
     this.transaction = new Transaction();
     this.trxType = TrxType.NONE;
-    this.ResetTrxType();
+    this.resetTrxType();
   }
 
-  ResetTrxType() {
+  resetTrxType() {
     this.ico = false;
     this.buy = false;
     this.sell = false;
@@ -110,14 +150,14 @@ export class NewTransactionComponent implements OnInit {
     this.available = 0;
   }
 
-  ToggleNewTrx(state: boolean) {
-    this.ResetTrx();
+  toggleNewTrx(state: boolean) {
+    this.resetTrx();
     this.newTransaction = state;
   }
 
-  SetTrxType(type: TrxType) {
+  setTrxType(type: TrxType) {
     this.trxType = type;
-    this.ResetTrxType();
+    this.resetTrxType();
     if(type === TrxType.ICO){
       this.ico = true;
     } else if (type === TrxType.AIRDROP) {
@@ -126,7 +166,7 @@ export class NewTransactionComponent implements OnInit {
       this.buy = true;
     } else if (type === TrxType.SELL) {
       this.sell = true;
-    } else if (type === TrxType.XFEROUT) {
+    } else if (type === TrxType.WITHDRAWAL) {
       this.xfer = true;
     }
   }

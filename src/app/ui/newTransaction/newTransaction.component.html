@@ -1,9 +1,9 @@
-<div><button (click)="ToggleNewTrx(true)">+ Transaction</button></div>
+<div><button (click)="toggleNewTrx(true)">+ Transaction</button></div>
 <div [hidden]="!newTransaction">
     <h3>Add a new transaction:</h3>
-    <button (click)="SetTrxType(3)">Buy</button> | <button (click)="SetTrxType(4)">Sell</button> | 
-    <button (click)="SetTrxType(2)">ICO</button> | <button (click)="SetTrxType(1)">Airdrop</button> | 
-    <button (click)="SetTrxType(6)">XFR</button>
+    <button (click)="setTrxType(3)">Buy</button> | <button (click)="setTrxType(4)">Sell</button> | 
+    <button (click)="setTrxType(2)">ICO</button> | <button (click)="setTrxType(1)">Airdrop</button> | 
+    <button (click)="setTrxType(6)">XFER</button>
     <div *ngIf="ico || buy || sell || airdrop || xfer">
     <div>
         <div>Coin/Token:</div><div><input [(ngModel)]="transaction.symbol" placeholder="symbol" (ngModelChange)="onSymbolChanged($event)"/></div>
@@ -13,15 +13,17 @@
     <div *ngIf="buy || sell || xfer">
         <div *ngIf="buy || sell">Location: </div>
         <div *ngIf="xfer">From: </div>
-        <select [(ngModel)]="transaction.sourceLocation" (ngModelChange)="onLocChanged($event)">
-            <option *ngFor="let loc of locs" [ngValue]="loc">{{ loc }}</option>
+        <select [(ngModel)]="transaction.sourceLocation" (ngModelChange)="onSrcLocChanged($event)">
+            <option *ngFor="let location of locationList" [ngValue]="location">{{ location }}</option>
         </select>
+        <app-address [addressList]="addressList" [locationType]="'source'" (addedApi)="addedAddress($event)" *ngIf="srcAddress"></app-address>
         <div *ngIf="xfer">
             <div>To: </div>
-            <select [(ngModel)]="transaction.destinationLocation">
-                <option *ngFor="let loc of locs" [ngValue]="loc">{{ loc }}</option>
+            <select [(ngModel)]="transaction.destinationLocation" (ngModelChange)="onDestLocChanged()">
+                <option *ngFor="let location of locationList" [ngValue]="location">{{ location }}</option>
             </select>
         </div>
+        <app-address [addressList]="addressList" [locationType]="'destination'" (addedApi)="addedAddress($event)" *ngIf="destAddress"></app-address>
     </div>
     <div *ngIf="sell">
         <div>Available: {{ available }}</div>
@@ -43,7 +45,7 @@
         <div>Fee Type: <input [(ngModel)]="transaction.feeSymbol" placeholder="symbol" /></div>
     </div>
     </div>
-    <input type="button" value="Add" (click)="AddTransaction()" *ngIf="ico || buy || sell || airdrop || xfer "/>
+    <input type="button" value="Add" (click)="addTransaction()" *ngIf="ico || buy || sell || airdrop || xfer "/>
     <span *ngIf="!ico && !buy && !sell && !airdrop && !xfer"> | </span>
-    <input type="button" value="Cancel" (click)="ToggleNewTrx(false)" />
+    <input type="button" value="Cancel" (click)="toggleNewTrx(false)" />
 </div>

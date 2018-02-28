@@ -1,5 +1,6 @@
 import { TrxType } from "./trxType";
 import { Location } from "./location";
+import { Address } from "./address";
 
 /**
  * Represents a transaction.
@@ -19,7 +20,9 @@ export class Transaction {
     private _destination: string;
     private _trxType: TrxType;
     private _sourceLocation: Location;
+    private _sourceAddress: Address;
     private _destinationLocation: Location;
+    private _destinationAddress: Address;
     private _trxId: string;
     private _trxSource: string;
 
@@ -141,6 +144,22 @@ export class Transaction {
 
     set sourceLocation(value: Location) {
         this._sourceLocation = value;
+    }
+
+    get sourceAddress(): Address {
+        return this._sourceAddress;
+    }
+
+    set sourceAddress(value: Address) {
+        this._sourceAddress = value;
+    }
+
+    get destinationAddress(): Address {
+        return this._destinationAddress;
+    }
+
+    set destinationAddress(value: Address) {
+        this._destinationAddress = value;
     }
 
     get destinationLocation(): Location {

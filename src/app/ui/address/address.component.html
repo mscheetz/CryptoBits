@@ -1,0 +1,18 @@
+Select Addresses:
+<select *ngIf="addressList.length > 0" [(ngModel)]="address">
+    <option *ngFor="let address of addressList" [ngValue]="name">{{ name }} + {{ address }}</option>
+</select>
+<div>
+    <input type="button" *ngIf="!addAddress" value="Create Address" (click)="toggleAddressAdder(true)"/>
+</div>
+<div *ngIf="addAddress">
+    <h3>Create New Address:</h3>
+    <div>
+        <input [(ngModel)]="address.address" placeholder="address" />
+        <input [(ngModel)]="address.name" placeholder="name" />
+    </div>
+    <div>
+        <input type="button" value="Add Address" (click)="addNewAddress()" />
+        <input type="button" value="Cancel" (click)="toggleAddressAdder(false)" />
+    </div>
+</div>

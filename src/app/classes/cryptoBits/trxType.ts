@@ -7,6 +7,6 @@ export enum TrxType {
     ICO,
     BUY,
     SELL,
-    XFERIN,
-    XFEROUT
+    DEPOSIT,
+    WITHDRAWAL
 }

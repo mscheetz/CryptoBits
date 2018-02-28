@@ -11,6 +11,7 @@ import { CryptoComponent } from './ui/crypto/crypto.component';
 import { UserService } from './services/userService';
 import { NinetyNineCryptoApi } from './apiAccess/ninetyNineCryptoApi';
 import { CryptoCompareApi } from './apiAccess/cryptoCompareApi';
+import { AddressComponent } from './ui/address/address.component';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { CryptoCompareApi } from './apiAccess/cryptoCompareApi';
     PortfolioComponent,
     ApiInfoComponent,
     NewTransactionComponent,
-    CryptoComponent
+    CryptoComponent,
+    AddressComponent
   ],
   imports: [
     BrowserModule,
